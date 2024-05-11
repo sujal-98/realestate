@@ -1,10 +1,9 @@
 import React from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { usePopup } from '../comp/header/navbar';
 
 
-const Signup = ({ onClose }) => {
+const Signup = ({ toggleL,close }) => {
   
   const validation = Yup.object().shape({
     Name: Yup.string().required('Name is required'),
@@ -30,9 +29,9 @@ const Signup = ({ onClose }) => {
   });
 
   return (
-    <div className='relative top-2 left-80 px-10 py-10 shadow-transparent rounded-3xl w-full '>
+    <div className='z-3 fixed top-2 left-80 px-10 py-10 shadow-transparent rounded-3xl w-full '>
       <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-50" onSubmit={formik.handleSubmit}>
-        <div className=' h-9 w-9  '><span className='text-3xl hover:text-red-700 font-bold' onClick={onClose}>&times;</span></div>
+        <div className=' h-9 w-9  '><span className='text-3xl hover:text-red-700 font-bold' onClick={close}>&times;</span></div>
         <div className='py-1 font-bold text-3xl mb-4 text-center'>
           SIGNUP
         </div>
@@ -95,7 +94,7 @@ const Signup = ({ onClose }) => {
           </button>
         </div>
         <div className='py-3 px-3 w-full '>
-          Already Have an Account? <span><a className="p-2 hover:underline text-blue-400">Login</a></span>
+          Already Have an Account? <span><a onClick={toggleL} className="p-2 hover:underline text-blue-400">Login</a></span>
         </div>
         <div className='border-b border-black'>Or</div>
         <div>
