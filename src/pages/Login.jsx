@@ -1,13 +1,10 @@
 import React from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import axios from 'axios';
 
-const Login = ({ toggleS,close }) => {
-
-
-
-
-  const validation = Yup.object().shape({
+const Login = () => {
+  const validationSchema = Yup.object().shape({
     email: Yup.string().email('Invalid email').required('Email is required'),
     password: Yup.string().required('Password is required'),
   });
@@ -17,16 +14,27 @@ const Login = ({ toggleS,close }) => {
       email: '',
       password: ''
     },
-    validationSchema: validation,
-    onSubmit: values => {
-      console.log(values);
-    },
+    validationSchema,
+    onSubmit: async (values, { setSubmitting }) => {
+      try {
+        const response = await axios.post('http://localhost:3000/login', values);
+        setSubmitting(false);
+        alert("Login Successful");
+      } catch (error) {
+        console.error('There was an error!', error);
+        setSubmitting(false);
+      }
+    }
   });
 
   return (
-    <div className='z-3 fixed left-80 px-10 py-10 shadow-transparent rounded-3xl w-1/2'>
-      <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" onSubmit={formik.handleSubmit}>
-        <div className=' h-9 w-9  '><span className='text-3xl hover:text-red-700 font-bold' onClick={close}>&times;</span></div>
+    <div className='shadow-transparent rounded-3xl w-full h-full flex flex-row-reverse' >
+      <div className='h-full'>
+        <img src="./images/login.jpg" alt="PHOTO"className='w-full  object-cover' style={{ height: '840px',width:'1000px' }}/>
+      </div>
+      <form className="bg-white shadow-md rounded px-7 pt-6  " style={{ height: '840px' ,width:'600px'}} onSubmit={formik.handleSubmit}>
+        <div className='h-9 w-9'>
+        </div>
         <div className='py-1 font-bold text-3xl mb-4 text-center'>Login</div>
         <div className="mb-4">
           <input
@@ -54,16 +62,18 @@ const Login = ({ toggleS,close }) => {
         </div>
         <div className="flex items-center justify-between">
           <div className="text-base">
-            <a className="text-blue-500 hover:text-blue-700 " href="#">Forgot Password?</a>
+            <a className="text-blue-500 hover:text-blue-700" href="#">Forgot Password?</a>
           </div>
         </div>
         <button
           className="bg-blue-500 hover:bg-blue-700 w-full text-white mt-4 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           type="submit"
         >
-          Login In
+          Log In
         </button>
-        <div className='border-t border-black mt-4 text-base pt-3'>Don't have an Account? <a onClick={toggleS} className='p-2 hover:text-blue-400'>SignUp</a></div>
+        <div className='border-t border-black mt-4 text-base pt-3'>
+          Don't have an Account? <a  className='p-2 hover:text-blue-400'>SignUp</a>
+        </div>
       </form>
     </div>
   );

@@ -1,22 +1,24 @@
 import './App.css';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Home from './pages/home'
-import Recently from './comp/Cardslider/recently';
-import Map from './comp/map/map';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes, useNavigation } from 'react-router-dom';
+import Home from './pages/home';
+import Signup from './pages/Signup';
+import Login from './pages/Login';
+import Userpage from './pages/userpage';
+
 
 function App() {
+  
+  const {authenticate,setAuthenticate}=useState(false)
+
   return (
     <Router>
-    <div>
       <Routes>
-        <Route path="/" element={<Home />} />
-        {/* <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="*" element={<NotFound />} /> */}
-
+        <Route path="/" element={<Userpage />} />
+        <Route path="/register" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
-    </div>
-  </Router>
+    </Router>
   );
 }
 

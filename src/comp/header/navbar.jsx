@@ -1,7 +1,16 @@
-import React, { useState, createContext, useContext } from 'react';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const Navbar = ({toggles,togglel}) => {
- 
+const Navbar = () => {
+  const navigate=useNavigate();
+
+  function handleRegister(){
+    navigate('/register')
+  }
+  function handleLogin(){
+    navigate('/login')
+  }
+
 
   return (
    
@@ -21,8 +30,8 @@ const Navbar = ({toggles,togglel}) => {
 
         {/* Buttons */}
         <div className="z-20">
-          <button className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md mr-2" onClick={togglel}>Login</button>
-          <button className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md mr-2" onClick={toggles}>Signup</button>
+          <button onClick={handleLogin} className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md mr-2" >Login</button>
+          <button onClick={handleRegister} className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md mr-2" >Signup</button>
           <button className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-md">Home</button>
         </div>
 

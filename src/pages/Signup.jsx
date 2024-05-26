@@ -1,38 +1,45 @@
 import React from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import axios from 'axios';
 
-
-const Signup = ({ toggleL,close }) => {
-  
-  const validation = Yup.object().shape({
+const Signup = () => {
+  const validationSchema = Yup.object().shape({
     Name: Yup.string().required('Name is required'),
     Password: Yup.string().required('Password is required').min(4, 'Password must be at least 4 characters'),
     Repass: Yup.string().oneOf([Yup.ref('Password'), null], 'Passwords must match'),
     email: Yup.string().email('Invalid email').required('Email is required'),
-    phone: Yup.string().matches(/^[0-9]{10}$/, 'Invalid phone number')
   });
-  
-  
+
   const formik = useFormik({
     initialValues: {
       Name: '',
       Password: '',
       Repass: '',
       email: '',
-      phone: ''
     },
-    validationSchema: validation,
-    onSubmit: values => {
-      alert(JSON.stringify(values, null, 2));
-    },
+    validationSchema,
+    onSubmit: async (values, { setSubmitting }) => {
+      try {
+        const response = await axios.post('http://localhost:3000/register', values);
+        setSubmitting(false);
+        alert("Signup Successful");
+      } catch (error) {
+        console.error('There was an error!', error);
+        setSubmitting(false);
+      }
+    }
   });
 
   return (
-    <div className='z-3 fixed top-2 left-80 px-10 py-10 shadow-transparent rounded-3xl w-full '>
-      <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-50" onSubmit={formik.handleSubmit}>
-        <div className=' h-9 w-9  '><span className='text-3xl hover:text-red-700 font-bold' onClick={close}>&times;</span></div>
-        <div className='py-1 font-bold text-3xl mb-4 text-center'>
+    <div className='shadow-transparent rounded-3xl w-full h-full flex flex-row-reverse'>
+      <div className='h-full'>
+        <img src="./images/signup.jpg" alt="PHOTO"className='w-full  object-cover' style={{ height: '840px',width:'1000px' }}/>
+      </div>
+      <form className="bg-white shadow-md rounded px-8 pt-10 " style={{ height: '840px',width:'600px' }} onSubmit={formik.handleSubmit}>
+        <div className='h-9 w-9'>
+        </div>
+        <div className='py-1 font-bold text-3xl mb-7 text-center'>
           SIGNUP
         </div>
         <div className="mb-4">
@@ -69,8 +76,7 @@ const Signup = ({ toggleL,close }) => {
             onBlur={formik.handleBlur}
             value={formik.values.Repass}
           />
-                    {formik.errors.Repass && formik.touched.Repass && <p className="text-red-500 text-xs italic p-1 text-left px-2">{formik.errors.Repass}</p>}
-
+          {formik.errors.Repass && formik.touched.Repass && <p className="text-red-500 text-xs italic p-1 text-left px-2">{formik.errors.Repass}</p>}
         </div>
         <div className="mb-6">
           <input
@@ -82,7 +88,7 @@ const Signup = ({ toggleL,close }) => {
             onBlur={formik.handleBlur}
             value={formik.values.email}
           />
-          {formik.errors.Email && formik.touched.Email && <p className="text-red-500 text-xs italic p-1 text-left px-2">{formik.errors.Email}</p>}
+          {formik.errors.email && formik.touched.email && <p className="text-red-500 text-xs italic p-1 text-left px-2">{formik.errors.email}</p>}
         </div>
         <div className="flex items-center justify-between">
           <button
@@ -93,15 +99,15 @@ const Signup = ({ toggleL,close }) => {
             {formik.isSubmitting ? 'Signing Up...' : 'Sign Up'}
           </button>
         </div>
-        <div className='py-3 px-3 w-full '>
-          Already Have an Account? <span><a onClick={toggleL} className="p-2 hover:underline text-blue-400">Login</a></span>
+        <div className='py-3 px-3 w-full'>
+          Already Have an Account? <span><a  className="p-2 hover:underline text-blue-400">Login</a></span>
         </div>
         <div className='border-b border-black'>Or</div>
         <div>
         </div>
       </form>
     </div>
-  )
+  );
 }
 
 export default Signup;
