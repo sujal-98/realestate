@@ -2,6 +2,7 @@ import React from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
+import { Navigate } from 'react-router-dom';
 
 const Login = () => {
   const validationSchema = Yup.object().shape({
@@ -17,9 +18,12 @@ const Login = () => {
     validationSchema,
     onSubmit: async (values, { setSubmitting }) => {
       try {
-        const response = await axios.post('http://localhost:3000/login', values);
+        const response = await axios.post('http://localhost:3000/login', values, {
+          withCredentials: true
+      });
         setSubmitting(false);
-        alert("Login Successful");
+        alert("Login Successfull ! Click here to continue");
+        <Navigate to="/profile" />
       } catch (error) {
         console.error('There was an error!', error);
         setSubmitting(false);
