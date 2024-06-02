@@ -8,6 +8,7 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import './styles.css'; // Import the CSS file for enhanced styles
 
 const Rental = () => {
 
@@ -17,70 +18,70 @@ const Rental = () => {
       name: "Risland Sky Mansion",
       description: "Luxurious apartment with breathtaking views",
       price: "$1,000,000",
-      image: "/static/images/cards/contemplative-reptile.jpg"
+      image: "/images/rentals/image1.jpg"
     },
     {
       id: 2,
       name: "Seaside Villa",
       description: "Beautiful villa with private beach access",
       price: "$1,500,000",
-      image: "/static/images/cards/contemplative-reptile.jpg"
+      image: "/images/rentals/image2.jpg"
     },
     {
       id: 3,
       name: "Mountain Retreat",
       description: "Cozy cabin in the mountains with stunning views",
       price: "$500,000",
-      image: "/static/images/cards/contemplative-reptile.jpg"
+      image: "/images/rentals/image3.jpg"
     },
     {
       id: 4,
       name: "City Center Loft",
       description: "Modern loft in the heart of the city",
       price: "$800,000",
-      image: "/static/images/cards/contemplative-reptile.jpg"
+      image: "/images/rentals/image4.jpg"
     },
     {
       id: 5,
       name: "Lakefront Property",
       description: "Charming cottage with lake access",
       price: "$700,000",
-      image: "/static/images/cards/contemplative-reptile.jpg"
+      image: "/images/rentals/image5.jpg"
     },
     {
       id: 6,
       name: "Country Estate",
       description: "Spacious estate with sprawling grounds",
       price: "$2,000,000",
-      image: "/static/images/cards/contemplative-reptile.jpg"
+      image: "/images/rentals/image6.jpg"
     },
     {
       id: 7,
       name: "Urban Penthouse",
       description: "Luxurious penthouse in the heart of the city",
       price: "$3,000,000",
-      image: "/static/images/cards/contemplative-reptile.jpg"
+      image: "/images/rentals/image7.jpg"
     },
     {
       id: 8,
       name: "Beachfront Condo",
       description: "Stunning condo with panoramic ocean views",
       price: "$1,200,000",
-      image: "/static/images/cards/contemplative-reptile.jpg"
+      image: "/images/rentals/image8.jpg"
     },
     {
       id: 9,
       name: "Country Cottage",
       description: "Quaint cottage in a peaceful countryside setting",
       price: "$400,000",
-      image: "/static/images/cards/contemplative-reptile.jpg"
+      image: "/images/rentals/image9.jpg"
     },
     {
       id: 10,
       name: "Garden Villa",
       description: "Elegant villa with lush garden and pool",
       price: "$1,800,000",
-      image: "/static/images/cards/contemplative-reptile.jpg"
+      image: "/images/rentals/image10.jpg"
     }
   ];
 
@@ -88,8 +89,7 @@ const Rental = () => {
     const { className, style, onClick } = props;
     return (
       <div
-        className={className}
-        style={{ ...style, display: "block", background: "red" }}
+        className={`${className} custom-arrow next-arrow`}
         onClick={onClick}
       />
     );
@@ -99,8 +99,7 @@ const Rental = () => {
     const { className, style, onClick } = props;
     return (
       <div
-        className={className}
-        style={{ ...style, display: "block", background: "green" }}
+        className={`${className} custom-arrow prev-arrow`}
         onClick={onClick}
       />
     );
@@ -110,16 +109,16 @@ const Rental = () => {
     dots: false,
     infinite: true,
     speed: 500,
-    slidesToShow: 5,
-    slidesToScroll: 3,
+    slidesToShow: 3,
+    slidesToScroll: 1,
     nextArrow: <NextArrow />,
     prevArrow: <PrevArrow />,
     responsive: [
       {
         breakpoint: 1024,
         settings: {
-          slidesToShow: 3,
-          slidesToScroll: 3,
+          slidesToShow: 2,
+          slidesToScroll: 1,
           infinite: true,
           dots: false
         }
@@ -127,50 +126,44 @@ const Rental = () => {
       {
         breakpoint: 600,
         settings: {
-          slidesToShow: 2,
-          slidesToScroll: 2,
-          initialSlide: 2
-        }
-      },
-      {
-        breakpoint: 480,
-        settings: {
           slidesToShow: 1,
-          slidesToScroll: 1
+          slidesToScroll: 1,
+          initialSlide: 1
         }
       }
     ]
   };
 
   return (
-    <div>
-      <div className='font-bold text-3xl lg:text-3xl w-1/2 h-1/2 mb-4'>
-        <h1>AVAILABLE FOR RENT</h1>
-        <h4>Based on preference of users like you</h4>
+    <div className="rental-container">
+      <div className='header'>
+        <h1 className="title">AVAILABLE FOR RENT</h1>
+        <h4 className="subtitle">Based on preference of users like you</h4>
       </div>
       <Slider {...settings}>
         {properties.map(property => (
-          <div key={property.id} className="px-2">
-            <Card sx={{ maxWidth: 345, height: '100%', boxShadow: 'none', borderRadius: 0, padding: '10px' }}>
+          <div key={property.id} className="property-card-wrapper">
+            <Card className="property-card">
               <CardMedia
                 component="img"
                 alt={property.name}
-                height="140"
+                height="200"
                 image={property.image}
+                className="property-image"
               />
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
+              <CardContent className="property-content">
+                <Typography gutterBottom variant="h5" component="div" className="property-name">
                   {property.name}
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" color="text.secondary" className="property-description">
                   {property.description}
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" color="text.secondary" className="property-price">
                   Price: {property.price}
                 </Typography>
               </CardContent>
-              <CardActions>
-                <Button variant="contained" color="success">
+              <CardActions className="property-actions">
+                <Button variant="contained" color="success" className="contact-button">
                   Contact Now
                 </Button>
               </CardActions>
@@ -179,7 +172,7 @@ const Rental = () => {
         ))}
       </Slider>
     </div>
-  )
+  );
 }
 
 export default Rental;

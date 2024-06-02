@@ -1,6 +1,6 @@
 import React from 'react'
 import Text from '../comp/bheader/text';
-import { Images } from '../comp/bheader/images';
+import { Images } from './images';
 import Map from '../comp/map/map';
 import Recently from '../comp/Cardslider/recently';
 import Top from '../comp/topseller/top';
@@ -17,9 +17,17 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
+import { Navigate } from 'react-router-dom';
 
 
 const Userpage = () => {
+  const logout = (name) => {
+    if (document.cookie.split(';').some((item) => item.trim().startsWith(name + '='))) {
+      document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    }  
+    window.location.reload()
+  }
+
     const [open, setOpen] = React.useState(false);
 
     const toggleDrawer = (newOpen) => () => {
@@ -75,7 +83,7 @@ const Userpage = () => {
         
         {/* Buttons */}
         <div className="z-20 flex items-center">
-  <button className="bg-red-400 hover:bg-red-500 text-white py-2 px-4 rounded-md mr-2">Logout</button>
+  <button className="bg-red-400 hover:bg-red-500 text-white py-2 px-4 rounded-md mr-2" onClick={()=>{logout("token")}} >Logout</button>
   <button className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-md mr-2">Home</button>
   <Button onClick={toggleDrawer(true)}><MenuIcon sx={{ color: 'white', fontSize: 32, cursor: 'pointer' }} /></Button>
 </div>

@@ -19,6 +19,7 @@
     "axios": "^1.6.8",
     "bcrypt": "^5.1.1",
     "cmdk": "^1.0.0",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "formik": "^2.4.6",

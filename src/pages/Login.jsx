@@ -1,10 +1,12 @@
-import React from 'react';
+import {React,useState} from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
 import { Navigate } from 'react-router-dom';
 
 const Login = () => {
+  const [redirect, setRedirect] = useState(false);
+
   const validationSchema = Yup.object().shape({
     email: Yup.string().email('Invalid email').required('Email is required'),
     password: Yup.string().required('Password is required'),
@@ -23,13 +25,17 @@ const Login = () => {
       });
         setSubmitting(false);
         alert("Login Successfull ! Click here to continue");
-        <Navigate to="/profile" />
+        setRedirect(true)
       } catch (error) {
+        setRedirect(false)
         console.error('There was an error!', error);
         setSubmitting(false);
       }
     }
   });
+  if (redirect) {
+    return <Navigate to="/profile" />;
+  }
 
   return (
     <div className='shadow-transparent rounded-3xl w-full h-full flex flex-row-reverse' >

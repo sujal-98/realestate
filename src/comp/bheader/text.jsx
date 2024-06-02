@@ -1,68 +1,58 @@
-import React from 'react'
-import { Swiper, SwiperSlide } from 'swiper/react';
+import React, { useEffect } from 'react';
 import 'swiper/swiper-bundle.css';
-// import { Autoplay, Pagination } from 'swiper';
+import './styles.css'; // Import the CSS file for styles
 
+const Text = () => {
+  useEffect(() => {
+    const typewriter = document.getElementById('typewriter-text');
+    const text1 = "Find your next ";
+    const text2 = "<span class='grey-text'>perfect</span>";
+    const text3 = "\n place with ease";
+    const fullText = text1 + text2 + text3;
+    let index = 0;
+    const speed = 90; 
+  
+    const typeEffect = () => {
+      if (index < fullText.length) {
+        if (fullText.slice(index, index + 6) === '<span ') {
+          const endIndex = fullText.indexOf('</span>', index) + 7;
+          typewriter.innerHTML += fullText.slice(index, endIndex);
+          index = endIndex;
+        } 
 
-// Swiper.use([Autoplay, Pagination]);
+        if (fullText.charAt(index) === '\n') {
+          typewriter.innerHTML += '<br />';
+          index++;
+        } else {
+          typewriter.innerHTML += fullText.charAt(index);
+          index++;
+        }
+        setTimeout(typeEffect, speed);
+      }
+    };
 
+    typewriter.innerHTML = ""; // Clear the initial text
+    typeEffect(); 
+  }, []);
 
-const Text = ({images}) => {
   return (
     <div className='h-full'>
-    <div className='flex flex-col gap-6  pl-10 pt-28 pb-28  px-1 max-w-6xl mx-auto'>
-      <ul>
-        <li>
-          <div className='text-left text-slate-700 font-bold text-3xl lg:text-6xl'>Find your next <em className='text-gray-500'>perfect</em><br />
-           place with ease</div>
-        </li>
-        {/* <li className='text-slate-700 font-bold text-3xl lg:text-6xl mb-4'>
-          <span>Your Dream Home is Just a<br /> Click Away!</span>
-        </li>
-        <li className='text-slate-700 font-bold text-3xl lg:text-6xl mb-4'>
-          <span>Discover Your Perfect Home<br /> with Us!</span>
-        </li> */}
-      </ul>
-    <div className='text-gray-400 text-base sm:text-xl text-left'>
-      Omlifespace will help you find your home fast, easy and comfortable.<br />
-      Our expert support is always available.
-    </div>
-    <a href="#" className='text-2xl sm:text-xl text-blue-800 font-bold hover:underline text-left'>Let's Start ...</a>
-  </div>
-
-  {/* here is our swiper */}
-  {/* <Swiper
-      spaceBetween={50}
-      slidesPerView={1}
-      autoplay={{
-        delay: 2500,
-        disableOnInteraction: false,
-      }}
-      pagination={{
-        clickable: true,
-      }}
-    style={{ height: '600px' }}
-    >
-      {images &&
-        images.map((image, index) => (
-          <SwiperSlide key={index}>
-            <img
-              src={image}
-              className="w-full h-full rounded-lg   object-cover  py-10 bg-cover "
-            />
-          </SwiperSlide>
-        ))}
-    </Swiper> */}
-    {/* <div>
-        <h1>Recent Listings</h1>
-        <span>Check Out these latest additiopn</span>
-        <div className="grid">
-             
+      
+      <div className='flex flex-col gap-6 pl-10 pt-28 pb-28 px-1 max-w-6xl mx-auto'>
+        <ul>
+          <li>
+            <div id="typewriter-text" className='text-left text-white font-bold text-3xl lg:text-8xl'></div>
+          </li>
+        </ul>
+        <div className='text-white text-6xl sm:text-3xl text-left'>
+          Omlifespace will help you find your home fast, easy and comfortable.<br />
+          Our expert support is always available.
         </div>
-    </div> */}
-  
-  </div>
-  )
-}
+        <a href="#" className='text-4xl sm:text-3xl text-blue-200 font-bold hover:underline text-left'>Let's Start ...</a>
+      </div>
+     
+    </div>
+  ); 
+};
 
-export default Text
+export default Text;

@@ -64,7 +64,7 @@ router.post('/login', async (req, res) => {
         res.status(400).send({message: ""})
       }
       console.log(accessToken)
-      res.setHeader('Set-Cookie', `token=${accessToken};  Max-Age=${30000000000}; Path=http://localhost:3000/login`);
+      res.setHeader('Set-Cookie', `token=${accessToken};  Max-Age=${30000000000}; Path=http://localhost:3001/login`);
       
       
       console.log("cookie created")

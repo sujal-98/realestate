@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import Card from './card';
 
 const Top = () => {
-  // Dummy data for sellers
   const [showAll, setShowAll] = useState(false);
 
   const sellers = [
@@ -20,11 +19,11 @@ const Top = () => {
     { id: 12, name: 'Seller 12', experience: 16, properties: 60, location: 'Indore' },
   ];
 
-  const limitedSellers = showAll ? sellers : sellers.slice(0, 8); // Show only 2 rows initially
+  const limitedSellers = showAll ? sellers : sellers.slice(0, 8);
 
   const renderCards = () => {
     return limitedSellers.map((seller) => (
-      <div key={seller.id} className="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 p-4">
+      <div key={seller.id} className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 p-4">
         <Card name={seller.name} experience={seller.experience} properties={seller.properties} location={seller.location} />
       </div>
     ));
@@ -32,15 +31,15 @@ const Top = () => {
 
   return (
     <div className="p-4">
-      <div className="font-bold text-3xl lg:text-3xl w-1/2 h-1/2 mb-4">
-        <h1>TOP SELLERS </h1>
-        <h4>Sellers with complete knowledge about locality and verified listings</h4>
+      <div className="font-bold text-3xl lg:text-3xl mb-6">
+        <h1>TOP SELLERS</h1>
+        <h4 className="text-lg mt-2">Sellers with complete knowledge about locality and verified listings</h4>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
         {renderCards()}
       </div>
       {!showAll && (
-        <div className="mt-4 text-center">
+        <div className="mt-6 flex justify-center">
           <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => setShowAll(true)}>
             Show More
           </button>

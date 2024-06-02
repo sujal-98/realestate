@@ -1,0 +1,100 @@
+.recently-container {
+    padding: 40px;
+    background-color: #f9f9f9;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.title {
+    font-size: 2.5rem;
+    color: #333;
+}
+
+.subtitle {
+    font-size: 1.25rem;
+    color: #777;
+    padding-bottom: 30px;
+
+}
+
+.property-card-wrapper {
+    padding: 10px;
+    padding-bottom: 10px;
+
+}
+
+.property-card {
+    max-width: 345px;
+    height: 100%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.2s ease-in-out;
+}
+
+.property-card:hover {
+    transform: translateY(-10px);
+}
+
+.property-image {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    max-height:250px;
+}
+
+.property-content {
+    padding: 15px;
+}
+
+.property-name {
+    font-weight: bold;
+    color: #333;
+}
+
+.property-description, .property-price {
+    color: #666;
+}
+
+.property-actions {
+    padding: 15px;
+    text-align: center;
+}
+
+.contact-button {
+    width: 100%;
+    background-color: #4caf50;
+    color: white;
+}
+
+.contact-button:hover {
+    background-color: #45a049;
+}
+
+.custom-arrow {
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    z-index: 1;
+    cursor: pointer;
+}
+
+.next-arrow::before, .prev-arrow::before {
+    font-size: 20px;
+    color: white;
+}
+
+.next-arrow {
+    right: -20px;
+}
+
+.prev-arrow {
+    left: -20px;
+}
