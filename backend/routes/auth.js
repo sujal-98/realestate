@@ -64,13 +64,13 @@ router.post('/login', async (req, res) => {
         res.status(400).send({message: ""})
       }
       console.log(accessToken)
-      res.setHeader('Set-Cookie', `token=${accessToken};  Max-Age=${30000000000}; Path=http://localhost:3001/login`);
+      res.setHeader('Set-Cookie', `token=${accessToken};  Max-Age=${30000000000}`);
       
       
       console.log("cookie created")
       console.log(user._doc);
   
-      return res.status(200).send({ message: 'Login successful' });
+      return res.status(200).send({ message: 'Login successful',userId:user._id });
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
@@ -93,5 +93,6 @@ router.post('/login', async (req, res) => {
         return res.status(401).send({ authenticated: false });
       }
     });
-  
+
+
 module.exports = router;

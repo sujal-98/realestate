@@ -1,12 +1,12 @@
-import {React,useState} from 'react';
+import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
 import { Navigate } from 'react-router-dom';
 
-const Login = () => {
+const Login = ({ onChildClick }) => {
   const [redirect, setRedirect] = useState(false);
-
+  const [userId, setUserId] = useState("");
   const validationSchema = Yup.object().shape({
     email: Yup.string().email('Invalid email').required('Email is required'),
     password: Yup.string().required('Password is required'),
@@ -22,27 +22,42 @@ const Login = () => {
       try {
         const response = await axios.post('http://localhost:3000/login', values, {
           withCredentials: true
-      });
+        });
+        console.log(response)
+        setUserId(response.data.userId);
+        onChildClick(response.data.userId); 
         setSubmitting(false);
-        alert("Login Successfull ! Click here to continue");
-        setRedirect(true)
+        alert("Login Successful! Click here to continue");
+        setRedirect(true);
       } catch (error) {
-        setRedirect(false)
         console.error('There was an error!', error);
+        setRedirect(false);
         setSubmitting(false);
       }
     }
   });
+
   if (redirect) {
-    return <Navigate to="/profile" />;
+    return <Navigate to={`/profile/:${userId}`} />;
   }
 
+  const navigateHome = () => {
+    return <Navigate to="/" />;
+  };
   return (
-    <div className='shadow-transparent rounded-3xl w-full h-full flex flex-row-reverse' >
+    <div className='shadow-transparent rounded-3xl w-full h-full flex flex-row-reverse'>
       <div className='h-full'>
-        <img src="./images/login.jpg" alt="PHOTO"className='w-full  object-cover' style={{ height: '840px',width:'1000px' }}/>
+        <img src="./images/login.jpg" alt="PHOTO" className='w-full  object-cover' style={{ height: '840px', width: '1000px' }} />
       </div>
-      <form className="bg-white shadow-md rounded px-7 pt-6  " style={{ height: '840px' ,width:'600px'}} onSubmit={formik.handleSubmit}>
+      <button
+        onClick={navigateHome}
+        className="absolute top-0 left-0 m-4 text-gray-500 hover:text-gray-700 focus:outline-none"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+      <form className="bg-white shadow-md rounded px-7 pt-6 " style={{ height: '840px', width: '600px' }} onSubmit={formik.handleSubmit}>
         <div className='h-9 w-9'>
         </div>
         <div className='py-1 font-bold text-3xl mb-4 text-center'>Login</div>
@@ -82,7 +97,7 @@ const Login = () => {
           Log In
         </button>
         <div className='border-t border-black mt-4 text-base pt-3'>
-          Don't have an Account? <a  className='p-2 hover:text-blue-400'>SignUp</a>
+          Don't have an Account? <a className='p-2 hover:text-blue-400'>SignUp</a>
         </div>
       </form>
     </div>

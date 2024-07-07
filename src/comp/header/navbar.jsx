@@ -13,7 +13,7 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="bg-slate-600 bg-opacity-30 p-4 flex items-center justify-between relative z-4">
+    <nav className="bg-slate-600 bg-opacity-30 p-4 flex items-center justify-between  z-4">
       {/* Logo */}
       <div className="text-white font-bold text-xl">Om Life Space</div>
 

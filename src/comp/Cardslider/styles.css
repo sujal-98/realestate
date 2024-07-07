@@ -23,11 +23,11 @@
 .property-card-wrapper {
     padding: 10px;
     padding-bottom: 10px;
-
 }
 
 .property-card {
     max-width: 345px;
+    max-height: 400px;
     height: 100%;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
@@ -42,16 +42,36 @@
 .property-image {
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
-    max-height:250px;
+    max-height:200px;
+    height:180px;
 }
 
 .property-content {
     padding: 15px;
 }
 
+.save{
+    position:'absolute';
+    left:'300px'
+}
+
 .property-name {
     font-weight: bold;
     color: #333;
+    max-width: 200px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.name{
+    max-width:'500px';
+}
+
+.description{
+    width:50%;
+    height:10%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .property-description, .property-price {

@@ -5,13 +5,14 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import "leaflet/dist/leaflet.css";
 import { AuthProvider } from './context/authcon';
+import { UserProvider } from './context/statecon';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <AuthProvider>
+  <AuthProvider> <UserProvider>
   <React.StrictMode>
     <App />
-  </React.StrictMode>    </AuthProvider>
+  </React.StrictMode></UserProvider>    </AuthProvider>
 
 );
 

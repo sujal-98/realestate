@@ -4,7 +4,7 @@ import Card from './card';
 const Top = () => {
   const [showAll, setShowAll] = useState(false);
 
-  const sellers = [
+  const seller = [
     { id: 1, name: 'Seller 1', experience: 5, properties: 10, location: 'Delhi' },
     { id: 2, name: 'Seller 2', experience: 6, properties: 12, location: 'Mumbai' },
     { id: 3, name: 'Seller 3', experience: 7, properties: 15, location: 'Bangalore' },
@@ -19,27 +19,27 @@ const Top = () => {
     { id: 12, name: 'Seller 12', experience: 16, properties: 60, location: 'Indore' },
   ];
 
-  const limitedSellers = showAll ? sellers : sellers.slice(0, 8);
+  const limitedSellers = showAll ? seller : seller.slice(0, 8);
 
   const renderCards = () => {
     return limitedSellers.map((seller) => (
-      <div key={seller.id} className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 p-4">
+      <div key={seller.id} className="w-full p-3">
         <Card name={seller.name} experience={seller.experience} properties={seller.properties} location={seller.location} />
       </div>
     ));
   };
 
   return (
-    <div className="p-4">
-      <div className="font-bold text-3xl lg:text-3xl mb-6">
-        <h1>TOP SELLERS</h1>
-        <h4 className="text-lg mt-2">Sellers with complete knowledge about locality and verified listings</h4>
+    <div className=" bg-gray-100 " >
+      <div className="text-center mb-5 w-full bg-slate-300 pt-3" style={{height:"100px"}}>
+        <h1 className="text-4xl text-gray-800 mb-2 font-thin">TOP SELLERS</h1>
+        <h4 className="text-xl text-gray-600">Sellers with complete knowledge about locality and verified listings</h4>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pl-10 ml-9 mb-4">
         {renderCards()}
       </div>
       {!showAll && (
-        <div className="mt-6 flex justify-center">
+        <div className="mt-4 mb-5 flex justify-center">
           <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => setShowAll(true)}>
             Show More
           </button>

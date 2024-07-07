@@ -6,7 +6,7 @@ dotenv.config();
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 
-
+const usercontrol=require('./controllers/usercontrol')
 const auth=require('./routes/auth')
 
 app.use(cookieParser())
@@ -18,7 +18,7 @@ app.use(cors(
 ));
 app.use(express.json());
 app.use(auth)
-
+app.use(usercontrol)
 
 app.listen(3000, () => {
     console.log("Listening on port 3000");

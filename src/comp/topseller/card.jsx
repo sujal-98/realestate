@@ -23,22 +23,22 @@ const useStyles = makeStyles({
     border: '3px solid #f5f5dc',
     boxShadow: '2px 2px 5px rgba(0, 0, 0, 0.3)',
     padding: '10px',
-    width: '250px',
-    height: '150px',
+    width: '300px',
+    height: '120px',
     position: 'relative',
   },
   rating: {
     display: 'flex',
     alignItems: 'center',
-    marginTop: '10px',
+    marginTop: '2px',
   },
   starIcon: {
     color: '#fbc02d',
-    marginRight: '5px',
-  },
+    marginRight: '2px',
+  }
 });
 
-const Card = () => {
+const Card = ({name,experience,location,properties}) => {
   const classes = useStyles();
 
   return (
@@ -46,24 +46,24 @@ const Card = () => {
       <div className={classes.location}>
         <LocationOnIcon fontSize="small" />
         <Typography variant="body2">
-          Delhi
+          {location}
         </Typography>
       </div>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <Avatar
           src="/your-avatar-photo.jpg"
           alt="Avatar"
-          sx={{ width: 80, height: 80, marginRight: 2 }}
+          sx={{ width: 60, height: 60, marginRight: 2 }}
         />
         <div>
-          <Typography variant="h6" gutterBottom>
-            Name
+          <Typography variant="h6" >
+            {name}
           </Typography>
           <Typography variant="body2" gutterBottom>
-            Years of Experience: 5
+            Years of Experience: {experience}
           </Typography>
-          <Typography variant="body2" gutterBottom>
-            Properties: 10
+          <Typography variant="body2" >
+            Properties: {properties}
           </Typography>
           <div className={classes.rating}>
             <StarIcon className={classes.starIcon} />

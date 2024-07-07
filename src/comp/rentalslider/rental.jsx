@@ -9,81 +9,10 @@ import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import './styles.css'; // Import the CSS file for enhanced styles
-
+import { rental } from '../../resources/property';
 const Rental = () => {
 
-  const properties = [
-    {
-      id: 1,
-      name: "Risland Sky Mansion",
-      description: "Luxurious apartment with breathtaking views",
-      price: "$1,000,000",
-      image: "/images/rentals/image1.jpg"
-    },
-    {
-      id: 2,
-      name: "Seaside Villa",
-      description: "Beautiful villa with private beach access",
-      price: "$1,500,000",
-      image: "/images/rentals/image2.jpg"
-    },
-    {
-      id: 3,
-      name: "Mountain Retreat",
-      description: "Cozy cabin in the mountains with stunning views",
-      price: "$500,000",
-      image: "/images/rentals/image3.jpg"
-    },
-    {
-      id: 4,
-      name: "City Center Loft",
-      description: "Modern loft in the heart of the city",
-      price: "$800,000",
-      image: "/images/rentals/image4.jpg"
-    },
-    {
-      id: 5,
-      name: "Lakefront Property",
-      description: "Charming cottage with lake access",
-      price: "$700,000",
-      image: "/images/rentals/image5.jpg"
-    },
-    {
-      id: 6,
-      name: "Country Estate",
-      description: "Spacious estate with sprawling grounds",
-      price: "$2,000,000",
-      image: "/images/rentals/image6.jpg"
-    },
-    {
-      id: 7,
-      name: "Urban Penthouse",
-      description: "Luxurious penthouse in the heart of the city",
-      price: "$3,000,000",
-      image: "/images/rentals/image7.jpg"
-    },
-    {
-      id: 8,
-      name: "Beachfront Condo",
-      description: "Stunning condo with panoramic ocean views",
-      price: "$1,200,000",
-      image: "/images/rentals/image8.jpg"
-    },
-    {
-      id: 9,
-      name: "Country Cottage",
-      description: "Quaint cottage in a peaceful countryside setting",
-      price: "$400,000",
-      image: "/images/rentals/image9.jpg"
-    },
-    {
-      id: 10,
-      name: "Garden Villa",
-      description: "Elegant villa with lush garden and pool",
-      price: "$1,800,000",
-      image: "/images/rentals/image10.jpg"
-    }
-  ];
+  
 
   const NextArrow = (props) => {
     const { className, style, onClick } = props;
@@ -141,7 +70,7 @@ const Rental = () => {
         <h4 className="subtitle">Based on preference of users like you</h4>
       </div>
       <Slider {...settings}>
-        {properties.map(property => (
+        {rental.map(property => (
           <div key={property.id} className="property-card-wrapper">
             <Card className="property-card">
               <CardMedia
