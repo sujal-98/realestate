@@ -6,8 +6,6 @@ const jwt=require('jsonwebtoken')
 
 
 
-// Register
-
 router.post('/register', async (req, res) => {
   console.log(req.body);
   const { Name, email, Password } = req.body;
@@ -44,7 +42,7 @@ router.post('/login', async (req, res) => {
   
     try {
       const user = await User.findOne({ email: email });
-      console.log(user); // Log the user to see if it's found
+      console.log(user); 
   
       if (!user) {
         return res.status(401).json({ error: "Wrong credentials" });
