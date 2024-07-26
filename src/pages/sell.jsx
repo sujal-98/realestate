@@ -6,7 +6,7 @@ import { Formik, Field, Form } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
 
-const UploadForSellForm = () => {
+const UploadForSellForm = ({id}) => {
   const navigate = useNavigate();
   const [propertyImages, setPropertyImages] = useState([]);
   const [mainImage, setMainImage] = useState('');
@@ -31,20 +31,21 @@ const UploadForSellForm = () => {
 
   const handleImageChange = (event) => {
     const files = Array.from(event.target.files);
-    const imageUrls = files.map((file) => URL.createObjectURL(file));
-    setPropertyImages(imageUrls);
-    setMainImage(imageUrls[0]);
+    const validFiles = files.filter(file => file.size / 1024 / 1024 <= 2);
+
+    if (validFiles.length < files.length) {
+      alert('Some files exceed the 2MB limit and were not added.');
+    }
+
+    setPropertyImages(prevImages => [...prevImages, ...validFiles]);
   };
 
   const handleProofOfOwnershipChange = (event, type) => {
     const file = event.target.files[0];
-    if (file) {
-      const fileSize = file.size / 1024 / 1024; // in MB
-      if (fileSize <= 2) {
-        setProofOfOwnership({ ...proofOfOwnership, [type]: file });
-      } else {
-        alert('File size exceeds 2MB limit.');
-      }
+    if (file && file.size / 1024 / 1024 <= 2) {
+      setProofOfOwnership({ ...proofOfOwnership, [type]: file });
+    } else {
+      alert('File size exceeds 2MB limit.');
     }
   };
 
@@ -58,25 +59,27 @@ const UploadForSellForm = () => {
     formData.append('type', values.type);
     formData.append('location', values.location);
     formData.append('price', values.price);
-    propertyImages.forEach((image, index) => {
-      formData.append('propertyImages', image);
+
+    propertyImages.forEach((file, index) => {
+      formData.append('propertyImages', file);
     });
-    formData.append('mainImage', mainImage);
+
     formData.append('adharCard', proofOfOwnership.adharCard);
     formData.append('panCard', proofOfOwnership.panCard);
 
     try {
-      const response = await axios.post('/upload', formData, {
+      const response = await axios.post(`http://localhost:3000/upload/${id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       });
       console.log('Property uploaded successfully', response.data);
-      navigate('/success');
+      alert("Property uploaded");
     } catch (error) {
       console.error('Error uploading property', error);
     }
   };
+
 
   return (
     <div>
@@ -145,7 +148,7 @@ const UploadForSellForm = () => {
                   <input
                     type="file"
                     id="property-images"
-                    accept="image/*"
+                    accept=".pdf,.jpg,.jpeg,.png"
                     multiple
                     onChange={(event) => {
                       handleImageChange(event);
@@ -170,7 +173,6 @@ const UploadForSellForm = () => {
                     ))}
                   </Box>
                 </FormControl>
-                {/* File Inputs for Proof of Ownership */}
                 <FormControl fullWidth sx={{ mt: 2 }}>
                   <InputLabel htmlFor="adhar-card">Adhar Card (Max 2MB)</InputLabel>
                   <input

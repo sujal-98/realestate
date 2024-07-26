@@ -29,7 +29,7 @@ function App() {
         <Route path="/login" element={<Login onChildClick={handleChild} />} />
         <Route path="/account/:userId" element={<Protexted><Account /></Protexted>} />
         <Route path="/termsconditions" element={<Protexted><Tc /></Protexted>} />
-        <Route path="/profile/sell/:userId" element={<Protexted><Sell /></Protexted>} />
+        <Route path="/profile/sell/:userId" element={<Protexted><Sell id={userId}/></Protexted>} />
         <Route path="/profile/buy/:userId" element={<Protexted><Buy props={userId} /></Protexted>} />
       </Routes>
     </Router>

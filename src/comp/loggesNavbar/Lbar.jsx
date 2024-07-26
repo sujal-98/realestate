@@ -40,7 +40,7 @@ const Lbar = ({id}) => {
   };
 
   const handleSell = () => {
-    navigate('/profile/sell/:id');
+    navigate(`/profile/sell/:${id}`);
   };
 
   const handleRent = () => {
