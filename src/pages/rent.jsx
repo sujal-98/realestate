@@ -1,43 +1,29 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Container, Typography, Grid, Box, Card, CardContent, CardActions, Button, Avatar, CircularProgress } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart, faEye } from '@fortawesome/free-solid-svg-icons';
 import Lbar from '../comp/loggesNavbar/Lbar';
 import { useSelector, useDispatch } from 'react-redux';
-import debounce from 'lodash/debounce';
-import { fetchProp } from '../actions/action';
+import { fetchRentProp } from '../actions/action';
 
-const Buy = () => {
-  const [savedProperties, setSavedProperties] = useState(new Set());
-
-  const dispatch = useDispatch();
-
+const Rent = () => {
   useEffect(() => {
-    dispatch(fetchProp('selling'));
-  }, [dispatch]);
-
-  const properties = useSelector((state) => state.buy.prop);
+    dispatch(fetchRentProp("rental"));
+  }, []);
+  const dispatch = useDispatch();
+  const properties = useSelector((state)=>state.buy.prop);
+  console.log("hy",properties)
   const loading = useSelector((state) => state.buy.loading);
   const error = useSelector((state) => state.buy.error);
 
-  const handleSave = (propertyId) => {
-    setSavedProperties(prev => {
-      const updatedSet = new Set(prev);
-      if (updatedSet.has(propertyId)) {
-        updatedSet.delete(propertyId); 
-      } else {
-        updatedSet.add(propertyId); 
-      }
-      return updatedSet; 
-    });
-  };
+
 
   return (
     <div>
       <Lbar />
       <Container maxWidth="lg" sx={{ mt: 4, mb: 4, bgcolor: '#f5f5f5', pt: 4, pb: 4, borderRadius: 2 }}>
         <Typography variant="h4" gutterBottom align="center">
-          Properties for Sale
+          Properties for Rent
         </Typography>
         {loading ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
@@ -85,14 +71,8 @@ const Buy = () => {
                             {property.impressions}
                           </Typography>
                         </Box>
-                        <Button
-                          variant="contained"
-                          color={savedProperties.has(property._id) ? 'error' : 'primary'} 
-                          startIcon={<FontAwesomeIcon icon={faHeart} />}
-                          size="small"
-                          onClick={() => handleSave(property._id)}
-                        >
-                          {savedProperties.has(property._id) ? 'Saved' : 'Save'}
+                        <Button variant="contained" color="primary" startIcon={<FontAwesomeIcon icon={faHeart} />} size="small">
+                          Save
                         </Button>
                       </Box>
                       <CardActions sx={{ position: 'relative', bottom: 0, left: 0, right: 0, pb: 2 }}>
@@ -124,4 +104,4 @@ const Buy = () => {
   );
 };
 
-export default Buy;
+export default Rent;

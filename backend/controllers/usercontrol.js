@@ -1,6 +1,39 @@
 const User = require('../model/user');
 const express = require('express');
 const router = express.Router();
+const multer = require('multer');
+const path = require('path');
+const { v2: cloudinary } = require('cloudinary');
+
+cloudinary.config({ 
+    cloud_name: 'dvbjobvcn', 
+    api_key: '883783879313788', 
+    api_secret: '20oHp1x-Drtx14xlvupgFssKauM' 
+  });
+  const storage = multer.memoryStorage();
+  const upload = multer({
+    storage: storage,
+    limits: { fileSize: 2 * 1024 * 1024 }, 
+    fileFilter: function (req, file, cb) {
+      checkFileType(file, cb);
+    }
+  }).fields([
+    { name: 'propertyImages', maxCount: 10 },
+    { name: 'adharCard', maxCount: 1 },
+    { name: 'panCard', maxCount: 1 }
+  ]);
+  function checkFileType(file, cb) {
+    const filetypes = /jpeg|jpg|png|pdf/;
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = filetypes.test(file.mimetype);
+  
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      cb('Error: Images and PDFs Only!');
+    }
+  }
+  
 
 
 //fetching user's detail from its id

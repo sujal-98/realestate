@@ -33,3 +33,61 @@ export const fetchUser = (userId) => {
       });
   };
 };
+
+
+export const fetchPropertyRequest = () => {
+  return {
+    type: 'FETCH_PROPERTIES_REQUEST'
+  };
+};
+
+export const fetchPropertySuccess = (prop) => {
+  return {
+    type: 'FETCH_PROPERTIES_SUCCESS',
+    payload: prop
+  };
+};
+
+export const fetchPropertyFailure = (error) => {
+  return {
+    type: 'FETCH_PROPERTIES_FAILURE',
+    payload: error
+  };
+};
+
+
+export const fetchProp = (saleType) => {
+  return (dispatch) => {
+    dispatch(fetchPropertyRequest());
+    axios.get(`http://localhost:3000/sale`,{
+      type:'selling'
+    }  )
+      .then(response => {
+        const user = response.data;
+        console.log("working",user)
+        dispatch(fetchPropertySuccess(user));
+      })
+      .catch(error => {
+        dispatch(fetchPropertyFailure(error.message));
+      });
+  };
+};
+
+export const fetchRentProp = (saleType) => {
+  return (dispatch) => {
+    dispatch(fetchPropertyRequest());
+    axios.get(`http://localhost:3000/rent`,{
+      type:'rental'
+    }  )
+      .then(response => {
+        const user = response.data;
+        console.log("working",user)
+        dispatch(fetchPropertySuccess(user));
+      })
+      .catch(error => {
+        dispatch(fetchPropertyFailure(error.message));
+      });
+  };
+};
+
+

@@ -36,6 +36,8 @@ const Lbar = ({id}) => {
     }
     else if(index==2){
       navigate('/profile/buy/:id');
+    } else if(index==3){
+      handleRent()
     }
   };
 
@@ -44,7 +46,7 @@ const Lbar = ({id}) => {
   };
 
   const handleRent = () => {
-    navigate('/profile/rent/:id');
+    navigate(`/profile/rent/:${id}`);
   };
 
   const DrawerList = (
