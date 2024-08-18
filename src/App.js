@@ -13,6 +13,7 @@ import Tc from './pages/tc';
 import Sell from './pages/sell';
 import Buy from './pages/buy';
 import Rent from './pages/rent';
+import Saved from './pages/Saved';
 
 function App() {
   const [userId, setUserId] = useState('');
@@ -32,11 +33,12 @@ function App() {
         </Protexted>} />
         <Route path="/register" element={<Signup />} />
         <Route path="/login" element={<Login onChildClick={handleChild} />} />
-        <Route path="/account/:userId" element={<Protexted><Account /></Protexted>} />
+        <Route path="/account/:userId" element={<Protexted><Account props={userId}/></Protexted>} />
         <Route path="/termsconditions" element={<Protexted><Tc /></Protexted>} />
         <Route path="/profile/sell/:userId" element={<Protexted><Sell id={userId}/></Protexted>} />
         <Route path="/profile/buy/:userId" element={<Protexted><Buy props={userId} /></Protexted>} />
         <Route path="/profile/rent/:userId" element={<Protexted><Rent props={userId} /></Protexted>} />
+        <Route path="/profile/save/:userId" element={<Protexted><Saved props={userId} /></Protexted>} />
       </Routes>
     </Router></Provider>
   );

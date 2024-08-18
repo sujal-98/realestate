@@ -7,29 +7,36 @@ const router = express.Router();
 
 // Add route
 router.post('/add/:id', async (req, res) => {
+
+    console.log("adding")
     const userId = req.params.id;
     const { propId } = req.body;
-    
+    console.log("userid",userId)
+    console.log("propertyid",propId)
     try {
         // Find the saved properties document for the user
         let savedProperties = await Saved.findOne({ userId }).exec();
         
         if (savedProperties) {
             // Check if the property ID is already in the saved array
-            if (!savedProperties.saved.includes(Types.ObjectId(propId))) {
-                savedProperties.saved.push(Types.ObjectId(propId));
+            if (!savedProperties.saved.includes(propId)) {
+                savedProperties.saved.push(propId);
                 await savedProperties.save();
-                res.status(200).json({ message: 'Property added to saved properties' });
+                await savedProperties.populate('saved').execPopulate();
+
+                res.status(200).json({ message: 'Property added to saved properties'.savedProperties });
             } else {
                 res.status(400).json({ message: 'Property already saved' });
             }
         } else {
             // Create a new saved properties document
             const newSavedProperties = new Saved({
-                userId: Types.ObjectId(userId),
-                saved: [Types.ObjectId(propId)]
+                userId: userId,
+                saved: [propId]
             });
             await newSavedProperties.save();
+            await newSavedProperties.populate('saved').execPopulate();
+
             res.status(200).json({ message: 'Property added to saved properties', newSavedProperties });
         }
     } catch (error) {
@@ -42,16 +49,19 @@ router.post('/add/:id', async (req, res) => {
 router.put('/remove/:id', async (req, res) => {
     const { propId } = req.body;
     const userId = req.params.id;
-    
+    console.log("User id", userId)
+    console.log("property id", propId)
     try {
-        const savedProperties = await Saved.findOne({ userId }).exec();
+        const savedProperties = await Saved.findOne({ userId:userId }).exec();
         
         if (savedProperties) {
-            const index = savedProperties.saved.indexOf(Types.ObjectId(propId));
+            const index = savedProperties.saved.indexOf(propId);
             if (index > -1) {
                 savedProperties.saved.splice(index, 1); 
                 await savedProperties.save();
-                res.status(200).json({ message: 'Property removed from saved properties' });
+                await savedProperties.populate('saved').execPopulate();
+                console.log("done")
+                res.status(200).json({ message: 'Property removed from saved properties',savedProperties });
             } else {
                 res.status(400).json({ message: 'Property not found in saved properties' });
             }
@@ -66,11 +76,11 @@ router.put('/remove/:id', async (req, res) => {
 
 // Get saved properties
 router.get('/getSaved/:id', async (req, res) => {
-    const userId = req.params.id;
-    
+    const id = req.params.id;
+
     try {
-        const savedProperties = await Saved.findOne({ userId }).exec();
-        
+        const savedProperties = await Saved.findOne({ userId: id }).populate('saved').exec();
+
         if (savedProperties) {
             res.status(200).json(savedProperties.saved);
         } else {

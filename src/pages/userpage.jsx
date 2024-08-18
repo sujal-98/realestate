@@ -1,4 +1,4 @@
-import React from 'react'
+import React,{useEffect} from 'react'
 import Text from '../comp/bheader/text';
 import { Images } from './images';
 import Map from '../comp/map/map';
@@ -6,9 +6,17 @@ import Recently from '../comp/Cardslider/recently';
 import Top from '../comp/topseller/top';
 import Rental from '../comp/rentalslider/rental';
 import Lbar from '../comp/loggesNavbar/Lbar';
+import { fetchUser } from '../actions/action';
+import {  useDispatch } from 'react-redux';
 
 
 const Userpage = ({props}) => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchUser(props));
+  }, []);
+
   return (
     <div>
       <Lbar id={props} />

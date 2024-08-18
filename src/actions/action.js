@@ -25,7 +25,24 @@ export const fetchUser = (userId) => {
     dispatch(fetchUserRequest());
     axios.get(`http://localhost:3000/account/${userId}`)
       .then(response => {
-        const user = response.data;
+        const user = response.data.user;
+        console.log("action user: ",user)
+        dispatch(fetchUserSuccess(user));
+      })
+      .catch(error => {
+        dispatch(fetchUserFailure(error.message));
+      });
+  };
+};
+export const updateUser = (userId,updatedData) => {
+  return (dispatch) => {
+    dispatch(fetchUserRequest());
+    axios.put(`http://localhost:3000/update/${userId}`,{
+      "user":updatedData
+    })
+      .then(response => {
+        const user = response.data.user;
+        console.log("action user: ",user)
         dispatch(fetchUserSuccess(user));
       })
       .catch(error => {
@@ -90,4 +107,73 @@ export const fetchRentProp = (saleType) => {
   };
 };
 
+
+export const fetchSavedRequest = () => {
+  return {
+    type: 'FETCH_SAVED_REQUEST'
+  };
+};
+
+export const fetchSavedSuccess = (prop) => {
+  return {
+    type: 'FETCH_SAVED_SUCCESS',
+    payload: prop
+  };
+};
+
+export const fetchSavedFailure = (prop) => {
+  return {
+    type: 'FETCH_SAVED_Failure',
+    payload: prop
+  };
+};
+export const add = (prop) => {
+  return {
+    type: 'ADD_PROPERTY',
+    payload: prop
+  };
+};
+export const remove = (prop) => {
+  return {
+    type: 'REMOVE_PROPERTY',
+    payload: prop
+  };
+};
+
+//Save Property
+export const fetchSave= (userId) => async (dispatch) => {
+  dispatch(fetchSavedRequest);
+  try {
+      const response = await axios.get(`http://localhost:3000/save/getSaved/${userId}`);
+      console.log(response.data)
+      dispatch(fetchSavedSuccess(response.data));
+  } catch (error) {
+      dispatch(fetchSavedFailure(error.message));
+  }
+};
+
+// Add Property
+export const addProperty = (userId,propertyId) => async (dispatch) => {
+  try {
+      const response=await axios.post(`http://localhost:3000/save/add/${userId}`,{
+        propId:propertyId
+      });
+      dispatch(add(response.data));
+  } catch (error) {
+      dispatch(fetchSavedFailure(error.message));
+  }
+};
+
+// Remove Property
+export const removeProperty = (userId,propertyId) => async (dispatch) => {
+
+  try {
+      const response=await axios.put(`http://localhost:3000/save/remove/${userId}`,{
+        propId:propertyId
+      });
+      dispatch(remove(response.data));
+  } catch (error) {
+    dispatch(fetchSavedFailure(error.message));
+  }
+};
 

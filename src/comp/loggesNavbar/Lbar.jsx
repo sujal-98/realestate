@@ -13,9 +13,13 @@ import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import { Avatar } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 
 const Lbar = ({id}) => {
   const navigate = useNavigate();
+
+  const user = useSelector(state => state.account.user);
+  console.log(user)
 
   const logout = (name) => {
     if (document.cookie.split(';').some((item) => item.trim().startsWith(name + '='))) {
@@ -34,8 +38,11 @@ const Lbar = ({id}) => {
     if (index === 0) {
       navigate('/profile/:id');
     }
+    else if(index==1){
+      handleSave()
+    }
     else if(index==2){
-      navigate('/profile/buy/:id');
+      navigate(`/profile/buy/:${id}`);
     } else if(index==3){
       handleRent()
     }
@@ -48,13 +55,16 @@ const Lbar = ({id}) => {
   const handleRent = () => {
     navigate(`/profile/rent/:${id}`);
   };
+  const handleSave = () => {
+    navigate(`/profile/save/:${id}`);
+  };
 
   const DrawerList = (
     <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
       <div className='flex justify-start  mb-1 border-b border-gray-300' style={{ height: '100px' }}>
-        <Avatar alt="..." src="" sx={{ marginTop: '20px', marginLeft: '10px', height: '60px', width: '60px' }} />
+        <Avatar alt="..." src={`${user.profilePicture}`} sx={{ marginTop: '20px', marginLeft: '10px', height: '60px', width: '60px' }} />
         <div className='mt-4 ml-4'>
-          <span className='text-xl block'>Name</span>
+          <span className='text-xl block'>{user.username}</span>
           <p className='text-blue-400 cursor-pointer ' style={{ width: '160px' }} onClick={() => { navigate(`/account/:${id}`) }}>View my Account</p>
         </div>
       </div>

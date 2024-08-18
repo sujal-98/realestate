@@ -3,45 +3,59 @@ import './pagecss/account.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import Lbar from '../comp/loggesNavbar/Lbar';
-import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchUser } from '../actions/action'; 
+import { fetchUser, updateUser } from '../actions/action';
 
-const Account = () => {
-  let { userId } = useParams();
+const Account = ({ props }) => {
   const dispatch = useDispatch();
-  const user = useSelector(state => state.user.user);
-  const userLoading = useSelector(state => state.user.loading);
-  const userError = useSelector(state => state.user.error);
+  const user = useSelector(state => state.account.user);
+  const userLoading = useSelector(state => state.account.loading);
+  const userError = useSelector(state => state.account.error);
 
-  const [update, setUpdate] = useState(true);
+  const [editMode, setEditMode] = useState({});
+  const [updatedUser, setUpdatedUser] = useState({});
+  const [hasChanges, setHasChanges] = useState(false);
+
+  useEffect(() => {
+    dispatch(fetchUser(props));
+  }, [dispatch]);
+
+
   const fileInput = useRef(null);
 
   const changeDp = () => {
     fileInput.current.click();
   };
 
-  useEffect(() => {
-    dispatch(fetchUser(userId.slice(1)));
-  }, [dispatch, userId]);
-
-  const [editMode, setEditMode] = useState({
-    bio: false,
-    email: false,
-    phone: false,
-    street: false,
-    city: false,
-    landmark: false,
-    dateOfBirth: false,
-    employment: false
-  });
-
   const handleChange = (field, value) => {
-    // Update the user state (local component state) if needed
+    setUpdatedUser(prevState => ({
+      ...prevState,
+      [field]: value
+    }));
+    checkForChanges();
   };
 
   const handleAddressChange = (field, value) => {
-    // Update the address field of the user state (local component state) if needed
+    setUpdatedUser(prevState => ({
+      ...prevState,
+      [field]: value
+    }));
+    checkForChanges();
+  };
+
+  const checkForChanges = () => {
+    const isChanged = Object.keys(updatedUser).some(
+      key => updatedUser[key] !== user[key]
+    );
+    setHasChanges(isChanged);
+  };
+
+  const handleUpdate = () => {
+    if (hasChanges) {
+      dispatch(updateUser(props,updatedUser));
+      setHasChanges(false);
+      setEditMode({});
+    }
   };
 
   if (userLoading) {
@@ -56,32 +70,36 @@ const Account = () => {
     <div className="account">
       <Lbar />
       <div className="profile-info">
-        <img src={user.profile} alt="Profile Photo" className="profile-img" />
-        <input type="file" id="upload" className="imageinput" ref={fileInput} />
+        <img src={user.profilePicture} alt="Profile Photo" className="profile-img" />
+        <input type="file" id="upload" className="imageinput" ref={fileInput} style={{ display: 'none' }} />
         <FontAwesomeIcon onClick={changeDp} icon={faCirclePlus} className="plus cursor-pointer" />
         <div className="profile-details">
-          <h2>{user.name}</h2>
+          <h2>{user.username}</h2>
           <p className="bio">
             {editMode.bio ? (
               <input
                 type="text"
                 className="value"
-                value={user.bio}
+                value={updatedUser.bio}
                 onChange={(e) => handleChange('bio', e.target.value)}
                 onBlur={() => setEditMode({ ...editMode, bio: false })}
                 autoFocus
               />
             ) : (
-              <span className="display" onClick={() => setEditMode({ ...editMode, bio: true })}>{user.bio}</span>
+              <span className="display" onClick={() => setEditMode({ ...editMode, bio: true })}>
+                {user.bio}
+              </span>
             )}
           </p>
           <p className="joined">Joined: {new Date(user.joiningDate).toLocaleDateString()}</p>
         </div>
-        {update ? (
-          <button className="update bg-gray-600 color-white font-semibold">Update</button>
-        ) : (
-          <button className="update font-semibold bg-green-300 color-white">Update</button>
-        )}
+        <button
+          className={`update font-semibold ${hasChanges ? 'bg-green-500' : 'bg-gray-600'} color-white`}
+          onClick={handleUpdate}
+          disabled={!hasChanges}
+        >
+          Update
+        </button>
       </div>
       <div className="w-full mr-2 ml-2 mb-4 mt-2 border-2 border-red-300"></div>
       <div className="info-section">
@@ -92,13 +110,15 @@ const Account = () => {
             <input
               className="value"
               type="text"
-              value={user.email}
+              value={updatedUser.email}
               onChange={(e) => handleChange('email', e.target.value)}
               onBlur={() => setEditMode({ ...editMode, email: false })}
               autoFocus
             />
           ) : (
-            <span className="display" onClick={() => setEditMode({ ...editMode, email: true })}>{user.email}</span>
+            <span className="display" onClick={() => setEditMode({ ...editMode, email: true })}>
+              {user.email}
+            </span>
           )}
         </div>
         <div className="info-item">
@@ -107,17 +127,19 @@ const Account = () => {
             <input
               className="value"
               type="text"
-              value={user.phone}
+              value={updatedUser.phone}
               onChange={(e) => handleChange('phone', e.target.value)}
               onBlur={() => setEditMode({ ...editMode, phone: false })}
               autoFocus
             />
           ) : (
-            <span className="display" onClick={() => setEditMode({ ...editMode, phone: true })}>{user.phone}</span>
+            <span className="display" onClick={() => setEditMode({ ...editMode, phone: true })}>
+              {user.phone}
+            </span>
           )}
         </div>
         <div className="info-item">
-          <strong className="title text-3xl" style={{ fontSize: '32px', marginTop: '10px', marginBottom: '10px' }}>
+          <strong className="title" style={{ fontSize: '32px', marginTop: '10px', marginBottom: '10px' }}>
             Address:
           </strong>
           <div className="flex flex-col">
@@ -126,7 +148,7 @@ const Account = () => {
               <input
                 type="text"
                 className="value"
-                value={user.street}
+                value={updatedUser.street}
                 onChange={(e) => handleAddressChange('street', e.target.value)}
                 onBlur={() => setEditMode({ ...editMode, street: false })}
                 autoFocus
@@ -143,13 +165,15 @@ const Account = () => {
               <input
                 type="text"
                 className="value"
-                value={user.city}
+                value={updatedUser.city}
                 onChange={(e) => handleAddressChange('city', e.target.value)}
                 onBlur={() => setEditMode({ ...editMode, city: false })}
                 autoFocus
               />
             ) : (
-              <span className="display" onClick={() => setEditMode({ ...editMode, city: true })}>{user.city}</span>
+              <span className="display" onClick={() => setEditMode({ ...editMode, city: true })}>
+                {user.city}
+              </span>
             )}
           </div>
           <div className="flex flex-col">
@@ -158,7 +182,7 @@ const Account = () => {
               <input
                 type="text"
                 className="value"
-                value={user.landmark}
+                value={updatedUser.landmark}
                 onChange={(e) => handleAddressChange('landmark', e.target.value)}
                 onBlur={() => setEditMode({ ...editMode, landmark: false })}
                 autoFocus
@@ -176,7 +200,7 @@ const Account = () => {
             <input
               type="date"
               className="value"
-              value={user.dob}
+              value={updatedUser.dob}
               onChange={(e) => handleChange('dob', e.target.value)}
               onBlur={() => setEditMode({ ...editMode, dateOfBirth: false })}
               autoFocus
@@ -193,7 +217,7 @@ const Account = () => {
             <input
               type="text"
               className="value"
-              value={user.employment}
+              value={updatedUser.employment}
               onChange={(e) => handleChange('employment', e.target.value)}
               onBlur={() => setEditMode({ ...editMode, employment: false })}
               autoFocus
@@ -208,7 +232,12 @@ const Account = () => {
       <div className="info-section">
         <h3>Properties</h3>
         <div className="info-item">
-          <strong>Properties Posted for Sale:</strong> {user.contactedProps.length}
+          <strong>Recent Property:</strong>
+          {user.recentProperty && <div>{user.recentProperty.title}</div>}
+        </div>
+        <div className="info-item">
+          <strong>Saved Property:</strong>
+          {user.savedProperty && <div>{user.savedProperty.title}</div>}
         </div>
       </div>
     </div>

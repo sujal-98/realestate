@@ -2,16 +2,17 @@
 const userAccount = {
   loading: false,
   user: {
-    name: "_____",
+    username: "_____",
     email: "example@example.com",
     phone: '0000000000',
     street: "Enter the street address",
     city: "Enter the city address",
     landmark: "enter a landmark",
     bio: "Write a bio",
-    dob: "Enter a valid dob",
+    dateOfBirth: "Enter a valid dob",
     employment: "Enter the employment status",
-    profile: '/images/profile.jpg',
+    profilePicture: '/images/profile.jpg',
+    joiningDate:'....',
     contactedProps: []
   },
   error: ''
