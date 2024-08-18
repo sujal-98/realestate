@@ -15,11 +15,11 @@ const Account = ({ props }) => {
   const [editMode, setEditMode] = useState({});
   const [updatedUser, setUpdatedUser] = useState({});
   const [hasChanges, setHasChanges] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
 
   useEffect(() => {
     dispatch(fetchUser(props));
-  }, [dispatch]);
-
+  }, [dispatch, props]);
 
   const fileInput = useRef(null);
 
@@ -27,10 +27,23 @@ const Account = ({ props }) => {
     fileInput.current.click();
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      const fileURL = URL.createObjectURL(file);
+      setUpdatedUser(prevState => ({
+        ...prevState,
+        profilePicture: fileURL, 
+      }));
+      setHasChanges(true);
+    }
+  };
+
   const handleChange = (field, value) => {
     setUpdatedUser(prevState => ({
       ...prevState,
-      [field]: value
+      [field]: value,
     }));
     checkForChanges();
   };
@@ -38,7 +51,7 @@ const Account = ({ props }) => {
   const handleAddressChange = (field, value) => {
     setUpdatedUser(prevState => ({
       ...prevState,
-      [field]: value
+      [field]: value,
     }));
     checkForChanges();
   };
@@ -52,7 +65,15 @@ const Account = ({ props }) => {
 
   const handleUpdate = () => {
     if (hasChanges) {
-      dispatch(updateUser(props,updatedUser));
+      const formData = new FormData();
+      Object.keys(updatedUser).forEach(key => {
+        formData.append(key, updatedUser[key]);
+      });
+      if (selectedFile) {
+        console.log(formData)
+        formData.append('profilePic', selectedFile);
+      }
+      dispatch(updateUser(props, formData));
       setHasChanges(false);
       setEditMode({});
     }
@@ -70,8 +91,8 @@ const Account = ({ props }) => {
     <div className="account">
       <Lbar />
       <div className="profile-info">
-        <img src={user.profilePicture} alt="Profile Photo" className="profile-img" />
-        <input type="file" id="upload" className="imageinput" ref={fileInput} style={{ display: 'none' }} />
+        <img src={updatedUser.profilePicture || user.profilePicture} alt="Profile Photo" className="profile-img" />
+        <input type="file" id="upload" className="imageinput" ref={fileInput} style={{ display: 'none' }} onChange={handleFileChange} />
         <FontAwesomeIcon onClick={changeDp} icon={faCirclePlus} className="plus cursor-pointer" />
         <div className="profile-details">
           <h2>{user.username}</h2>
@@ -80,7 +101,7 @@ const Account = ({ props }) => {
               <input
                 type="text"
                 className="value"
-                value={updatedUser.bio}
+                value={updatedUser.bio || user.bio}
                 onChange={(e) => handleChange('bio', e.target.value)}
                 onBlur={() => setEditMode({ ...editMode, bio: false })}
                 autoFocus

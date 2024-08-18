@@ -39,7 +39,11 @@ export const updateUser = (userId,updatedData) => {
     dispatch(fetchUserRequest());
     axios.put(`http://localhost:3000/update/${userId}`,{
       "user":updatedData
-    })
+    }, {headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  }
+)
       .then(response => {
         const user = response.data.user;
         console.log("action user: ",user)
