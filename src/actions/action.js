@@ -145,39 +145,53 @@ export const remove = (prop) => {
 };
 
 //Save Property
-export const fetchSave= (userId) => async (dispatch) => {
-  dispatch(fetchSavedRequest);
+export const fetchSave = (userId) => async (dispatch) => {
+  dispatch(fetchSavedRequest());
   try {
-      const response = await axios.get(`http://localhost:3000/save/getSaved/${userId}`);
-      console.log(response.data)
+      const response = await axios.get(`http://localhost:3000/save/getSavedIds/${userId}`);
       dispatch(fetchSavedSuccess(response.data));
   } catch (error) {
       dispatch(fetchSavedFailure(error.message));
   }
 };
 
-// Add Property
-export const addProperty = (userId,propertyId) => async (dispatch) => {
+//full data
+export const fetchSaveFull = (userId) => async (dispatch) => {
+  dispatch({ type: 'FETCH_FULLSAVED_REQUEST' });
   try {
-      const response=await axios.post(`http://localhost:3000/save/add/${userId}`,{
-        propId:propertyId
+      const response = await axios.get(`http://localhost:3000/save/getSaved/${userId}`);
+      dispatch({ type: 'FETCH_FULLSAVED_SUCCESS', payload: response.data });
+  } catch (error) {
+      dispatch({ type: 'FETCH_FULLSAVED_FAILURE', payload: error.message });
+  }
+};
+// Add Property
+export const addProperty = (userId, propertyId) => async (dispatch) => {
+  try {
+      const response = await axios.post(`http://localhost:3000/save/add/${userId}`, {
+        propId: propertyId
       });
-      dispatch(add(response.data));
+      if(response.data.propId) {
+          dispatch(add(response.data.propId));
+      }
   } catch (error) {
       dispatch(fetchSavedFailure(error.message));
   }
 };
 
-// Remove Property
-export const removeProperty = (userId,propertyId) => async (dispatch) => {
 
+// Remove Property
+export const removeProperty = (userId, propertyId) => async (dispatch) => {
   try {
-      const response=await axios.put(`http://localhost:3000/save/remove/${userId}`,{
-        propId:propertyId
+      const response = await axios.put(`http://localhost:3000/save/remove/${userId}`, {
+        propId: propertyId
       });
-      dispatch(remove(response.data));
+      if(response.data.propId) {
+          dispatch(remove(response.data.propId));
+      }
   } catch (error) {
-    dispatch(fetchSavedFailure(error.message));
+      dispatch(fetchSavedFailure(error.message));
   }
 };
+
 
