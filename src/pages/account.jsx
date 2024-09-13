@@ -1,266 +1,324 @@
-import React, { useState, useRef, useEffect } from 'react';
-import './pagecss/account.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
+import React, { useState, useEffect, useRef } from 'react';
+import { TextField, Button, Box, Typography, Container, Grid, Card, Avatar, IconButton } from '@mui/material';
+import { deepPurple } from '@mui/material/colors';
+import { AddCircle } from '@mui/icons-material'; 
 import Lbar from '../comp/loggesNavbar/Lbar';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { fetchUser, updateUser } from '../actions/action';
+import axios from 'axios';
 
-const Account = ({ props }) => {
+const Account = ({props}) => {
   const dispatch = useDispatch();
-  const user = useSelector(state => state.account.user);
-  const userLoading = useSelector(state => state.account.loading);
-  const userError = useSelector(state => state.account.error);
-
-  const [editMode, setEditMode] = useState({});
-  const [updatedUser, setUpdatedUser] = useState({});
-  const [hasChanges, setHasChanges] = useState(false);
-  const [selectedFile, setSelectedFile] = useState(null);
+  const fileInputRef = useRef(null); 
 
   useEffect(() => {
     dispatch(fetchUser(props));
   }, [dispatch, props]);
+  const user = useSelector((state) => state.account.user);
 
-  const fileInput = useRef(null);
+  const [localUser, setLocalUser] = useState(user);
+  const [editMode, setEditMode] = useState({
+    bio: false,
+    email: false,
+    phone: false,
+    street: false,
+    city: false,
+    landmark: false,
+    dateOfBirth: false,
+    employment: false,
+  });
 
-  const changeDp = () => {
-    fileInput.current.click();
+  const handleInputChange = (field, value) => {
+    setLocalUser({
+      ...localUser,
+      [field]: value,
+    });
+  };
+
+  const handleEditModeChange = (field) => {
+    setEditMode({
+      ...editMode,
+      [field]: !editMode[field],
+    });
   };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setSelectedFile(file);
-      const fileURL = URL.createObjectURL(file);
-      setUpdatedUser(prevState => ({
-        ...prevState,
-        profilePicture: fileURL, 
-      }));
-      setHasChanges(true);
+
+        setLocalUser({
+          ...localUser,
+          profilePicture: file,
+        });
+  
     }
   };
 
-  const handleChange = (field, value) => {
-    setUpdatedUser(prevState => ({
-      ...prevState,
-      [field]: value,
-    }));
-    checkForChanges();
-  };
-
-  const handleAddressChange = (field, value) => {
-    setUpdatedUser(prevState => ({
-      ...prevState,
-      [field]: value,
-    }));
-    checkForChanges();
-  };
-
-  const checkForChanges = () => {
-    const isChanged = Object.keys(updatedUser).some(
-      key => updatedUser[key] !== user[key]
-    );
-    setHasChanges(isChanged);
-  };
-
-  const handleUpdate = () => {
-    if (hasChanges) {
-      const formData = new FormData();
-      Object.keys(updatedUser).forEach(key => {
-        formData.append(key, updatedUser[key]);
-      });
-      if (selectedFile) {
-        console.log(formData)
-        formData.append('profilePic', selectedFile);
-      }
-      dispatch(updateUser(props, formData));
-      setHasChanges(false);
-      setEditMode({});
+  const handleSaveChanges =async (id) => {
+    // Gather all form data
+    console.log("id: ",id)
+    console.log("local user: ",localUser)
+    const formData = new FormData();
+    for (const key in localUser) {
+      console.log(key)
+      formData.append(key, localUser[key]);
+    }
+    console.log(formData)
+    try{
+      const update=await axios.put(`http://localhost:3000/update/${id}`,formData, {headers: {
+        'Content-Type': 'multipart/form-data'
+      }})
+      console.log("updated successfully- ", update)
+      setLocalUser(update);
+    }
+    catch(error){
+      console.log(error)
     }
   };
 
-  if (userLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (userError) {
-    return <div>Error: {userError}</div>;
-  }
+  const handleProfilePictureClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click(); 
+    }
+  };
 
   return (
-    <div className="account">
+    <div>
       <Lbar />
-      <div className="profile-info">
-        <img src={updatedUser.profilePicture || user.profilePicture} alt="Profile Photo" className="profile-img" />
-        <input type="file" id="upload" className="imageinput" ref={fileInput} style={{ display: 'none' }} onChange={handleFileChange} />
-        <FontAwesomeIcon onClick={changeDp} icon={faCirclePlus} className="plus cursor-pointer" />
-        <div className="profile-details">
-          <h2>{user.username}</h2>
-          <p className="bio">
-            {editMode.bio ? (
-              <input
-                type="text"
-                className="value"
-                value={updatedUser.bio || user.bio}
-                onChange={(e) => handleChange('bio', e.target.value)}
-                onBlur={() => setEditMode({ ...editMode, bio: false })}
-                autoFocus
-              />
-            ) : (
-              <span className="display" onClick={() => setEditMode({ ...editMode, bio: true })}>
-                {user.bio}
-              </span>
-            )}
-          </p>
-          <p className="joined">Joined: {new Date(user.joiningDate).toLocaleDateString()}</p>
-        </div>
-        <button
-          className={`update font-semibold ${hasChanges ? 'bg-green-500' : 'bg-gray-600'} color-white`}
-          onClick={handleUpdate}
-          disabled={!hasChanges}
-        >
-          Update
-        </button>
-      </div>
-      <div className="w-full mr-2 ml-2 mb-4 mt-2 border-2 border-red-300"></div>
-      <div className="info-section">
-        <h3>Personal Information</h3>
-        <div className="info-item">
-          <strong className="title">Email:</strong>
-          {editMode.email ? (
+      <Container maxWidth="md" sx={{ marginTop: '2rem' }}>
+        <Card sx={{ padding: '2rem', borderRadius: '10px', boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)', backgroundColor: '#f5f5f5' }}>
+          {/* Profile Section */}
+          <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '2rem' }}>
+            <Avatar
+              alt={localUser.username}
+              src={localUser.profilePicture}
+              sx={{ width: 100, height: 100, marginRight: '1.5rem', backgroundColor: deepPurple[500] }}
+            />
             <input
-              className="value"
-              type="text"
-              value={updatedUser.email}
-              onChange={(e) => handleChange('email', e.target.value)}
-              onBlur={() => setEditMode({ ...editMode, email: false })}
+              accept="image/*"
+              style={{ display: 'none' }}
+              ref={fileInputRef}
+              type="file"
+              onChange={handleFileChange}
+            />
+            <IconButton onClick={handleProfilePictureClick}>
+              <AddCircle sx={{ fontSize: 40, color: deepPurple[500] }} />
+            </IconButton>
+            <Box>
+              <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                {localUser.username}
+              </Typography>
+              <Typography variant="body2" color="textSecondary">
+                Joined on {localUser.dateOfJoining}
+              </Typography>
+            </Box>
+          </Box>
+
+          {/* Bio Section */}
+          <Typography variant="h6" gutterBottom>
+            Bio
+          </Typography>
+          {editMode.bio ? (
+            <TextField
+              fullWidth
+              variant="outlined"
+              value={localUser.bio}
+              onChange={(e) => handleInputChange('bio', e.target.value)}
+              onBlur={() => handleEditModeChange('bio')}
+              multiline
+              rows={4}
               autoFocus
             />
           ) : (
-            <span className="display" onClick={() => setEditMode({ ...editMode, email: true })}>
-              {user.email}
-            </span>
+            <Typography
+              variant="body1"
+              onClick={() => handleEditModeChange('bio')}
+              sx={{ cursor: 'pointer', padding: '8px', backgroundColor: '#e0e0e0', borderRadius: '5px' }}
+            >
+              {localUser.bio}
+            </Typography>
           )}
-        </div>
-        <div className="info-item">
-          <strong className="title">Phone Number:</strong>
-          {editMode.phone ? (
-            <input
-              className="value"
-              type="text"
-              value={updatedUser.phone}
-              onChange={(e) => handleChange('phone', e.target.value)}
-              onBlur={() => setEditMode({ ...editMode, phone: false })}
-              autoFocus
-            />
-          ) : (
-            <span className="display" onClick={() => setEditMode({ ...editMode, phone: true })}>
-              {user.phone}
-            </span>
-          )}
-        </div>
-        <div className="info-item">
-          <strong className="title" style={{ fontSize: '32px', marginTop: '10px', marginBottom: '10px' }}>
-            Address:
-          </strong>
-          <div className="flex flex-col">
-            <span className="title">Street:</span>
-            {editMode.street ? (
-              <input
-                type="text"
-                className="value"
-                value={updatedUser.street}
-                onChange={(e) => handleAddressChange('street', e.target.value)}
-                onBlur={() => setEditMode({ ...editMode, street: false })}
-                autoFocus
-              />
-            ) : (
-              <span className="display" onClick={() => setEditMode({ ...editMode, street: true })}>
-                {user.street}
-              </span>
-            )}
-          </div>
-          <div className="flex flex-col">
-            <span className="title">City:</span>
-            {editMode.city ? (
-              <input
-                type="text"
-                className="value"
-                value={updatedUser.city}
-                onChange={(e) => handleAddressChange('city', e.target.value)}
-                onBlur={() => setEditMode({ ...editMode, city: false })}
-                autoFocus
-              />
-            ) : (
-              <span className="display" onClick={() => setEditMode({ ...editMode, city: true })}>
-                {user.city}
-              </span>
-            )}
-          </div>
-          <div className="flex flex-col">
-            <span className="title">Landmark:</span>
-            {editMode.landmark ? (
-              <input
-                type="text"
-                className="value"
-                value={updatedUser.landmark}
-                onChange={(e) => handleAddressChange('landmark', e.target.value)}
-                onBlur={() => setEditMode({ ...editMode, landmark: false })}
-                autoFocus
-              />
-            ) : (
-              <span className="display" onClick={() => setEditMode({ ...editMode, landmark: true })}>
-                {user.landmark}
-              </span>
-            )}
-          </div>
-        </div>
-        <div className="info-item">
-          <strong className="title">Date of Birth:</strong>
-          {editMode.dateOfBirth ? (
-            <input
-              type="date"
-              className="value"
-              value={updatedUser.dob}
-              onChange={(e) => handleChange('dob', e.target.value)}
-              onBlur={() => setEditMode({ ...editMode, dateOfBirth: false })}
-              autoFocus
-            />
-          ) : (
-            <span className="display" onClick={() => setEditMode({ ...editMode, dateOfBirth: true })}>
-              {new Date(user.dob).toLocaleDateString()}
-            </span>
-          )}
-        </div>
-        <div className="info-item">
-          <strong className="title">Employment:</strong>
-          {editMode.employment ? (
-            <input
-              type="text"
-              className="value"
-              value={updatedUser.employment}
-              onChange={(e) => handleChange('employment', e.target.value)}
-              onBlur={() => setEditMode({ ...editMode, employment: false })}
-              autoFocus
-            />
-          ) : (
-            <span className="display" onClick={() => setEditMode({ ...editMode, employment: true })}>
-              {user.employment}
-            </span>
-          )}
-        </div>
-      </div>
-      <div className="info-section">
-        <h3>Properties</h3>
-        <div className="info-item">
-          <strong>Recent Property:</strong>
-          {user.recentProperty && <div>{user.recentProperty.title}</div>}
-        </div>
-        <div className="info-item">
-          <strong>Saved Property:</strong>
-          {user.savedProperty && <div>{user.savedProperty.title}</div>}
-        </div>
-      </div>
+
+          {/* Contact Info */}
+          <Typography variant="h6" sx={{ marginTop: '2rem' }} gutterBottom>
+            Contact Information
+          </Typography>
+          <Grid container spacing={3}>
+            {/* Email */}
+            <Grid item xs={12}>
+              <Typography variant="body1">Email</Typography>
+              {editMode.email ? (
+                <TextField
+                  fullWidth
+                  variant="outlined"
+                  value={localUser.email}
+                  onChange={(e) => handleInputChange('email', e.target.value)}
+                  onBlur={() => handleEditModeChange('email')}
+                  autoFocus
+                />
+              ) : (
+                <Typography
+                  variant="body1"
+                  onClick={() => handleEditModeChange('email')}
+                  sx={{ cursor: 'pointer', padding: '8px', backgroundColor: '#e0e0e0', borderRadius: '5px' }}
+                >
+                  {localUser.email}
+                </Typography>
+              )}
+            </Grid>
+
+            {/* Phone */}
+            <Grid item xs={12}>
+              <Typography variant="body1">Phone</Typography>
+              {editMode.phone ? (
+                <TextField
+                  fullWidth
+                  variant="outlined"
+                  value={localUser.phone}
+                  onChange={(e) => handleInputChange('phone', e.target.value)}
+                  onBlur={() => handleEditModeChange('phone')}
+                  autoFocus
+                />
+              ) : (
+                <Typography
+                  variant="body1"
+                  onClick={() => handleEditModeChange('phone')}
+                  sx={{ cursor: 'pointer', padding: '8px', backgroundColor: '#e0e0e0', borderRadius: '5px' }}
+                >
+                  {localUser.phone}
+                </Typography>
+              )}
+            </Grid>
+
+            {/* Street */}
+            <Grid item xs={12}>
+              <Typography variant="body1">Street</Typography>
+              {editMode.street ? (
+                <TextField
+                  fullWidth
+                  variant="outlined"
+                  value={localUser.street}
+                  onChange={(e) => handleInputChange('street', e.target.value)}
+                  onBlur={() => handleEditModeChange('street')}
+                  autoFocus
+                />
+              ) : (
+                <Typography
+                  variant="body1"
+                  onClick={() => handleEditModeChange('street')}
+                  sx={{ cursor: 'pointer', padding: '8px', backgroundColor: '#e0e0e0', borderRadius: '5px' }}
+                >
+                  {localUser.street || 'Click to enter street'}
+                </Typography>
+              )}
+            </Grid>
+
+            {/* City */}
+            <Grid item xs={12}>
+              <Typography variant="body1">City</Typography>
+              {editMode.city ? (
+                <TextField
+                  fullWidth
+                  variant="outlined"
+                  value={localUser.city}
+                  onChange={(e) => handleInputChange('city', e.target.value)}
+                  onBlur={() => handleEditModeChange('city')}
+                  autoFocus
+                />
+              ) : (
+                <Typography
+                  variant="body1"
+                  onClick={() => handleEditModeChange('city')}
+                  sx={{ cursor: 'pointer', padding: '8px', backgroundColor: '#e0e0e0', borderRadius: '5px' }}
+                >
+                  {localUser.city || 'Click to enter city'}
+                </Typography>
+              )}
+            </Grid>
+
+            {/* Landmark */}
+            <Grid item xs={12}>
+              <Typography variant="body1">Landmark</Typography>
+              {editMode.landmark ? (
+                <TextField
+                  fullWidth
+                  variant="outlined"
+                  value={localUser.landmark}
+                  onChange={(e) => handleInputChange('landmark', e.target.value)}
+                  onBlur={() => handleEditModeChange('landmark')}
+                  autoFocus
+                />
+              ) : (
+                <Typography
+                  variant="body1"
+                  onClick={() => handleEditModeChange('landmark')}
+                  sx={{ cursor: 'pointer', padding: '8px', backgroundColor: '#e0e0e0', borderRadius: '5px' }}
+                >
+                  {localUser.landmark || 'Click to enter landmark'}
+                </Typography>
+              )}
+            </Grid>
+
+            {/* Date of Birth */}
+            <Grid item xs={12}>
+              <Typography variant="body1">Date of Birth</Typography>
+              {editMode.dateOfBirth ? (
+                <TextField
+                  fullWidth
+                  variant="outlined"
+                  type="date"
+                  value={localUser.dateOfBirth}
+                  onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
+                  onBlur={() => handleEditModeChange('dateOfBirth')}
+                  autoFocus
+                />
+              ) : (
+                <Typography
+                  variant="body1"
+                  onClick={() => handleEditModeChange('dateOfBirth')}
+                  sx={{ cursor: 'pointer', padding: '8px', backgroundColor: '#e0e0e0', borderRadius: '5px' }}
+                >
+                  {localUser.dateOfBirth || 'Click to enter date of birth'}
+                </Typography>
+              )}
+            </Grid>
+
+            {/* Employment */}
+            <Grid item xs={12}>
+              <Typography variant="body1">Employment</Typography>
+              {editMode.employment ? (
+                <TextField
+                  fullWidth
+                  variant="outlined"
+                  value={localUser.employment}
+                  onChange={(e) => handleInputChange('employment', e.target.value)}
+                  onBlur={() => handleEditModeChange('employment')}
+                  autoFocus
+                />
+              ) : (
+                <Typography
+                  variant="body1"
+                  onClick={() => handleEditModeChange('employment')}
+                  sx={{ cursor: 'pointer', padding: '8px', backgroundColor: '#e0e0e0', borderRadius: '5px' }}
+                >
+                  {localUser.employment || 'Click to enter employment status'}
+                </Typography>
+              )}
+            </Grid>
+          </Grid>
+
+          {/* Save Changes Button */}
+          <Box sx={{ textAlign: 'center', marginTop: '2rem' }}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={()=>{handleSaveChanges(props)}}
+            >
+              Save Changes
+            </Button>
+          </Box>
+        </Card>
+      </Container>
     </div>
   );
 };

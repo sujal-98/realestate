@@ -61,13 +61,13 @@ module.exports = router;
 
 
 //for updating the user's data with id
-router.put('/update/:id', async (req, res) => { 
+router.put('/update/:id', upload ,async (req, res) => { 
     const id = req.params.id; 
-    const updatedData = req.body.user; 
+    const updatedData = req.body; 
+    console.log(id)
     console.log("updated data",updatedData);
     
     try {
-
       const uploadToCloudinary = (file, options) => {
         return new Promise((resolve, reject) => {
           const uploadStream = cloudinary.uploader.upload_stream(options, (error, result) => {
