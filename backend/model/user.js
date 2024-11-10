@@ -16,9 +16,9 @@ const userSchema = new mongoose.Schema({
     profilePicture: { type: String,
      }, 
     employment: { type: String, default: '' }, 
-    contactedProps: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Seller' }],
-    savedProps: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Property' }],
-    seller: { type: mongoose.Schema.Types.ObjectId, ref: 'Seller' },
+    contactedProps: { type: [mongoose.Schema.Types.ObjectId], ref: 'Seller', default: [] },
+    savedProps: { type: [mongoose.Schema.Types.ObjectId], ref: 'Property', default: [] },
+    seller: { type: mongoose.Schema.Types.ObjectId, ref: 'Seller',default:null },
     joiningDate: {
         type: Date,
         default: Date.now,

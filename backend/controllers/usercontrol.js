@@ -22,17 +22,23 @@ const upload = multer({
   { name: 'profilePic', maxCount: 1 },
 ]);
 
-  function checkFileType(file, cb) {
-    const filetypes = /jpeg|jpg|png|pdf/;
-    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = filetypes.test(file.mimetype);
+function checkFileType(file, cb) {
+  const acceptedMIMETypes = /image\/jpeg|image\/jpg|image\/png|application\/pdf/;
+
+  const extname = /jpeg|jpg|png|pdf/.test(path.extname(file.originalname).toLowerCase());
+  const mimetype = acceptedMIMETypes.test(file.mimetype.toLowerCase());
   
-    if (mimetype && extname) {
-      return cb(null, true);
-    } else {
-      cb('Error: Images and PDFs Only!');
-    }
+  console.log(`File extension check: ${extname}, MIME type check: ${mimetype}`);
+  console.log(`File mimetype received: ${file.mimetype}`);
+  
+  if (extname) {
+    cb(null, true); 
+  } else {
+    cb(new Error('Error: Images and PDFs Only!')); 
   }
+}
+
+
   
 
 
@@ -80,13 +86,15 @@ router.put('/update/:id', upload ,async (req, res) => {
           uploadStream.end(file.buffer);
         });
       };
-      if(req.files){
-        console.log("I executed")
-        const picUrl = req.files['profilePic'] 
-      ? await uploadToCloudinary(req.files['profilePic'], { resource_type: 'raw', folder: 'profilePic' }) 
-      : null;
-      updatedData.profilePicture=picUrl
+      if (req.files && req.files['profilePic'] && req.files['profilePic'][0]) {
+        console.log("Profile picture upload detected");
+        const picUrl = await uploadToCloudinary(req.files['profilePic'][0], {
+          resource_type: 'image',
+          folder: 'profilePic'
+        });
+        updatedData.profilePicture = picUrl;
       }
+  
 
         const user = await User.findByIdAndUpdate(
             id,
