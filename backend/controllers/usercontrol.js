@@ -49,10 +49,11 @@ router.get('/account/:id', async (req, res) => {
     try {
         const user = await User.findOne(
             { _id: id }
-        );
+        ).exec();
         if (user) {
           console.log("check")
             console.log(user)
+            console.log("profile picture: ",user.profilePicture)
             return res.status(200).send({ user,message: "User fetched successfully"});
         } else {
             return res.status(404).json({ message: "No user found" });
@@ -63,7 +64,6 @@ router.get('/account/:id', async (req, res) => {
     }
 });
 
-module.exports = router;
 
 
 //for updating the user's data with id

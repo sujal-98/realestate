@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { Container, Typography, TextField, Button, FormControl, InputLabel, Select, MenuItem, Box, Avatar, Grid, CircularProgress } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import Lbar from '../comp/loggesNavbar/Lbar';
@@ -8,8 +8,8 @@ import axios from 'axios';
 import { motion } from 'framer-motion';
 
 const UploadForSellForm = ({ id }) => {
-  const navigate = useNavigate();
-  const [propertyImages, setPropertyImages] = useState([]);
+  const navigate = useNpropertyImagesavigate();
+  const [, setPropertyImages] = useState([]);
   const [mainImage, setMainImage] = useState('');
   const [proofOfOwnership, setProofOfOwnership] = useState({
     adharCard: null,

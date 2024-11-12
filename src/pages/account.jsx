@@ -10,13 +10,12 @@ import axios from 'axios';
 const Account = ({props}) => {
   const dispatch = useDispatch();
   const fileInputRef = useRef(null); 
-
   useEffect(() => {
     dispatch(fetchUser(props));
   }, [dispatch, props]);
   const user = useSelector((state) => state.account.user);
 
-  const [localUser, setLocalUser] = useState(user);
+  const [localUser, setLocalUser] = useState({});
   const [editMode, setEditMode] = useState({
     bio: false,
     email: false,
@@ -69,7 +68,7 @@ const Account = ({props}) => {
         'Content-Type': 'multipart/form-data'
       }})
       console.log("updated successfully- ", update)
-      setLocalUser(update);
+      dispatch(fetchUser(id));
     }
     catch(error){
       console.log(error)
@@ -90,8 +89,8 @@ const Account = ({props}) => {
           {/* Profile Section */}
           <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '2rem' }}>
             <Avatar
-              alt={localUser.username}
-              src={localUser.profilePicture}
+              alt={user.username}
+              src={user.profilePicture}
               sx={{ width: 100, height: 100, marginRight: '1.5rem', backgroundColor: deepPurple[500] }}
             />
             <input
@@ -106,10 +105,10 @@ const Account = ({props}) => {
             </IconButton>
             <Box>
               <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-                {localUser.username}
+                {user.username}
               </Typography>
               <Typography variant="body2" color="textSecondary">
-                Joined on {localUser.dateOfJoining}
+                Joined on {user.dateOfJoining}
               </Typography>
             </Box>
           </Box>
@@ -122,7 +121,7 @@ const Account = ({props}) => {
             <TextField
               fullWidth
               variant="outlined"
-              value={localUser.bio}
+              value={user.bio}
               onChange={(e) => handleInputChange('bio', e.target.value)}
               onBlur={() => handleEditModeChange('bio')}
               multiline
@@ -135,7 +134,7 @@ const Account = ({props}) => {
               onClick={() => handleEditModeChange('bio')}
               sx={{ cursor: 'pointer', padding: '8px', backgroundColor: '#e0e0e0', borderRadius: '5px' }}
             >
-              {localUser.bio}
+              {user.bio}
             </Typography>
           )}
 
@@ -151,7 +150,7 @@ const Account = ({props}) => {
                 <TextField
                   fullWidth
                   variant="outlined"
-                  value={localUser.email}
+                  value={user.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
                   onBlur={() => handleEditModeChange('email')}
                   autoFocus
@@ -162,7 +161,7 @@ const Account = ({props}) => {
                   onClick={() => handleEditModeChange('email')}
                   sx={{ cursor: 'pointer', padding: '8px', backgroundColor: '#e0e0e0', borderRadius: '5px' }}
                 >
-                  {localUser.email}
+                  {user.email}
                 </Typography>
               )}
             </Grid>
@@ -174,7 +173,7 @@ const Account = ({props}) => {
                 <TextField
                   fullWidth
                   variant="outlined"
-                  value={localUser.phone}
+                  value={user.phone}
                   onChange={(e) => handleInputChange('phone', e.target.value)}
                   onBlur={() => handleEditModeChange('phone')}
                   autoFocus
@@ -185,7 +184,7 @@ const Account = ({props}) => {
                   onClick={() => handleEditModeChange('phone')}
                   sx={{ cursor: 'pointer', padding: '8px', backgroundColor: '#e0e0e0', borderRadius: '5px' }}
                 >
-                  {localUser.phone}
+                  {user.phone}
                 </Typography>
               )}
             </Grid>
@@ -197,7 +196,7 @@ const Account = ({props}) => {
                 <TextField
                   fullWidth
                   variant="outlined"
-                  value={localUser.street}
+                  value={user.street}
                   onChange={(e) => handleInputChange('street', e.target.value)}
                   onBlur={() => handleEditModeChange('street')}
                   autoFocus
@@ -208,7 +207,7 @@ const Account = ({props}) => {
                   onClick={() => handleEditModeChange('street')}
                   sx={{ cursor: 'pointer', padding: '8px', backgroundColor: '#e0e0e0', borderRadius: '5px' }}
                 >
-                  {localUser.street || 'Click to enter street'}
+                  {user.street || 'Click to enter street'}
                 </Typography>
               )}
             </Grid>
@@ -220,7 +219,7 @@ const Account = ({props}) => {
                 <TextField
                   fullWidth
                   variant="outlined"
-                  value={localUser.city}
+                  value={user.city}
                   onChange={(e) => handleInputChange('city', e.target.value)}
                   onBlur={() => handleEditModeChange('city')}
                   autoFocus
@@ -231,7 +230,7 @@ const Account = ({props}) => {
                   onClick={() => handleEditModeChange('city')}
                   sx={{ cursor: 'pointer', padding: '8px', backgroundColor: '#e0e0e0', borderRadius: '5px' }}
                 >
-                  {localUser.city || 'Click to enter city'}
+                  {user.city || 'Click to enter city'}
                 </Typography>
               )}
             </Grid>
@@ -243,7 +242,7 @@ const Account = ({props}) => {
                 <TextField
                   fullWidth
                   variant="outlined"
-                  value={localUser.landmark}
+                  value={user.landmark}
                   onChange={(e) => handleInputChange('landmark', e.target.value)}
                   onBlur={() => handleEditModeChange('landmark')}
                   autoFocus
@@ -254,7 +253,7 @@ const Account = ({props}) => {
                   onClick={() => handleEditModeChange('landmark')}
                   sx={{ cursor: 'pointer', padding: '8px', backgroundColor: '#e0e0e0', borderRadius: '5px' }}
                 >
-                  {localUser.landmark || 'Click to enter landmark'}
+                  {user.landmark || 'Click to enter landmark'}
                 </Typography>
               )}
             </Grid>
@@ -267,7 +266,7 @@ const Account = ({props}) => {
                   fullWidth
                   variant="outlined"
                   type="date"
-                  value={localUser.dateOfBirth}
+                  value={user.dateOfBirth}
                   onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
                   onBlur={() => handleEditModeChange('dateOfBirth')}
                   autoFocus
@@ -278,7 +277,7 @@ const Account = ({props}) => {
                   onClick={() => handleEditModeChange('dateOfBirth')}
                   sx={{ cursor: 'pointer', padding: '8px', backgroundColor: '#e0e0e0', borderRadius: '5px' }}
                 >
-                  {localUser.dateOfBirth || 'Click to enter date of birth'}
+                  {user.dateOfBirth || 'Click to enter date of birth'}
                 </Typography>
               )}
             </Grid>
@@ -290,7 +289,7 @@ const Account = ({props}) => {
                 <TextField
                   fullWidth
                   variant="outlined"
-                  value={localUser.employment}
+                  value={user.employment}
                   onChange={(e) => handleInputChange('employment', e.target.value)}
                   onBlur={() => handleEditModeChange('employment')}
                   autoFocus
@@ -301,7 +300,7 @@ const Account = ({props}) => {
                   onClick={() => handleEditModeChange('employment')}
                   sx={{ cursor: 'pointer', padding: '8px', backgroundColor: '#e0e0e0', borderRadius: '5px' }}
                 >
-                  {localUser.employment || 'Click to enter employment status'}
+                  {user.employment || 'Click to enter employment status'}
                 </Typography>
               )}
             </Grid>
