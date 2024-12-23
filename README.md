@@ -4,7 +4,25 @@ A feature-rich real estate application built using **React** and **Material-UI**
 
 ---
 
-## Features
+# 🚀 Getting Started
+
+### 1. Install Daytona
+Follow the Daytona installation guide to get started with the application.
+
+### 2. Create the Workspace
+Run the following command to create a new workspace:
+
+```bash
+daytona create <REPO_URL>
+```
+
+### 3. Start the Application:
+```bash
+npm run dev
+```
+
+
+## ✨ Features
 
 - **Authentication**:
   - Secure Authentication using JWT   
