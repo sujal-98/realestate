@@ -49,7 +49,8 @@ router.post('/upload/:id', upload, async (req, res) => {
     return res.status(400).json({ error: 'No files were uploaded.' });
   }
 
-  const { description, type, location, price } = req.body;
+  const { description,title, type, location, price, yearBuilt, amenities } = req.body;
+  console.log("Body ",req.body)
 
   try {
     let seller = await Seller.findOne({ userId: objectId });
@@ -74,36 +75,58 @@ router.post('/upload/:id', upload, async (req, res) => {
     };
 
     const uploadPromises = [];
+    let adharCardUrl = null;
+    let panCardUrl = null;
+    let proofOfOwnershipUrl = null;
 
     if (req.files['propertyImages']) {
+      // Process multiple property images
       req.files['propertyImages'].forEach(file => {
         uploadPromises.push(uploadToCloudinary(file, { resource_type: 'image', folder: 'property_images' }));
       });
     }
 
-    const adharCardUrl = req.files['adharCard'] 
-      ? await uploadToCloudinary(req.files['adharCard'][0], { resource_type: 'raw', folder: 'proof_of_ownership' }) 
-      : null;
+    if (req.files['adharCard']) {
+      // Process adhar card
+      adharCardUrl = await uploadToCloudinary(req.files['adharCard'][0], { resource_type: 'raw', folder: 'proof_of_ownership' });
+    }
 
-    const panCardUrl = req.files['panCard'] 
-      ? await uploadToCloudinary(req.files['panCard'][0], { resource_type: 'raw', folder: 'proof_of_ownership' }) 
-      : null;
+    if (req.files['panCard']) {
+      // Process pan card
+      panCardUrl = await uploadToCloudinary(req.files['panCard'][0], { resource_type: 'raw', folder: 'proof_of_ownership' });
+    }
 
+    if (req.files['proofOfOwnership']) {
+      // Process proof of ownership
+      proofOfOwnershipUrl = await uploadToCloudinary(req.files['proofOfOwnership'][0], { resource_type: 'raw', folder: 'proof_of_ownership' });
+    }
+
+    // Upload all property images concurrently
     const uploadedImages = await Promise.all(uploadPromises);
 
+    // Parse the amenities object sent in the body
+    const amenitiesObj = amenities;
+
+    // Create the new property document, including amenities
     const newProperty = new Property({
       sellerId: seller._id,
+      title,
       propertyImages: uploadedImages,
       description,
       type,
       location,
       price,
+      yearBuilt,
+      amenities: amenitiesObj,  
       adharCard: adharCardUrl,
-      panCard: panCardUrl
+      panCard: panCardUrl,
+      proofOfOwnership: proofOfOwnershipUrl
     });
 
+    // Save the new property
     const savedProperty = await newProperty.save();
 
+    // Add the new property to the seller's list of properties
     seller.properties.push(savedProperty._id);
     await seller.save();
 
@@ -133,6 +156,7 @@ router.get('/sale',async (req,res)=>{
     res.status(500).json({message:error.message})
   }
 })
+
 router.get('/rent',async (req,res)=>{
   const type="rental"
   console.log(type)

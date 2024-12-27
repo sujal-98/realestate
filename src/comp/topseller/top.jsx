@@ -21,30 +21,40 @@ const Top = () => {
 
   const limitedSellers = showAll ? seller : seller.slice(0, 8);
 
-  const renderCards = () => {
-    return limitedSellers.map((seller) => (
-      <div key={seller.id} className="w-full p-3">
-        <Card name={seller.name} experience={seller.experience} properties={seller.properties} location={seller.location} />
-      </div>
-    ));
-  };
-
   return (
-    <div className=" bg-gray-100 " >
-      <div className="text-center mb-5 w-full bg-slate-300 pt-3" style={{height:"100px"}}>
-        <h1 className="text-4xl text-gray-800 mb-2 font-thin">TOP SELLERS</h1>
-        <h4 className="text-xl text-gray-600">Sellers with complete knowledge about locality and verified listings</h4>
+    <div className="bg-gray-100">
+      <div className="bg-slate-300 py-8 px-4 text-center">
+        <h1 className="text-2xl md:text-4xl text-gray-800 mb-2 font-thin">TOP SELLERS</h1>
+        <h4 className="text-lg md:text-xl text-gray-600">
+          Sellers with complete knowledge about locality and verified listings
+        </h4>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pl-10 ml-9 mb-4">
-        {renderCards()}
-      </div>
-      {!showAll && (
-        <div className="mt-4 mb-5 flex justify-center">
-          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => setShowAll(true)}>
-            Show More
-          </button>
+
+      <div className="container mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {limitedSellers.map((seller) => (
+            <div key={seller.id}>
+              <Card 
+                name={seller.name} 
+                experience={seller.experience} 
+                properties={seller.properties} 
+                location={seller.location} 
+              />
+            </div>
+          ))}
         </div>
-      )}
+
+        {!showAll && (
+          <div className="mt-8 text-center">
+            <button 
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-colors"
+              onClick={() => setShowAll(true)}
+            >
+              Show More
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

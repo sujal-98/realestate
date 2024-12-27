@@ -92,7 +92,7 @@ const SavedProp = ({ props }) => {
           </Box>
         ) : error ? (
           <Typography variant="h6" color="error" align="center">
-            {error}
+            No Saved Properties
           </Typography>
         ) : (
           <Grid container spacing={4}>

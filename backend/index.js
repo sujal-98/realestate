@@ -2,8 +2,6 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const bodyParser = require('body-parser');
-
-
 const dotenv = require('dotenv');
 dotenv.config();
 const mongoose = require('mongoose');
@@ -12,6 +10,7 @@ const Saved=require('./controllers/savingControl')
 const usercontrol=require('./controllers/usercontrol')
 const propControl=require('./controllers/propertycontrol')
 const auth=require('./routes/auth')
+const sellerControl=require('./controllers/sellerControl')
 
 
 
@@ -28,6 +27,7 @@ app.use(express.json());
 app.use(auth)
 app.use(usercontrol)
 app.use(propControl)
+app.use(sellerControl)
 
 app.listen(3000, () => {
     console.log("Listening on port 3000");

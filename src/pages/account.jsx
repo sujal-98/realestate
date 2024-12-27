@@ -1,84 +1,103 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { TextField, Button, Box, Typography, Container, Grid, Card, Avatar, IconButton } from '@mui/material';
 import { deepPurple } from '@mui/material/colors';
-import { AddCircle } from '@mui/icons-material'; 
+import { AddCircle } from '@mui/icons-material';
 import Lbar from '../comp/loggesNavbar/Lbar';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchUser, updateUser } from '../actions/action';
+import { fetchUser } from '../actions/action';
 import axios from 'axios';
 
-const Account = ({props}) => {
+const Account = ({ props }) => {
   const dispatch = useDispatch();
-  const fileInputRef = useRef(null); 
-  useEffect(() => {
-    dispatch(fetchUser(props));
-  }, [dispatch, props]);
+  const fileInputRef = useRef(null);
   const user = useSelector((state) => state.account.user);
 
   const [localUser, setLocalUser] = useState({});
-  const [editMode, setEditMode] = useState({
-    bio: false,
-    email: false,
-    phone: false,
-    street: false,
-    city: false,
-    landmark: false,
-    dateOfBirth: false,
-    employment: false,
-  });
+  const [editMode, setEditMode] = useState({});
+  const [isChanged, setIsChanged] = useState(false);
+  const [fileChanged, setfileChanged] = useState(false);
+
+
+  useEffect(() => {
+    dispatch(fetchUser(props));
+  }, [dispatch, props]);
+
+  useEffect(() => {
+    if (user) {
+      setLocalUser({ ...user });
+    }
+  }, [user]);
 
   const handleInputChange = (field, value) => {
-    setLocalUser({
-      ...localUser,
-      [field]: value,
+    setLocalUser((prevState) => {
+      const updatedUser = { ...prevState, [field]: value };
+      const hasChanges = Object.keys(updatedUser).some(
+        (key) => updatedUser[key] !== user[key]
+      );
+      setIsChanged(hasChanges); 
+      return updatedUser;
     });
   };
+  
 
   const handleEditModeChange = (field) => {
-    setEditMode({
-      ...editMode,
-      [field]: !editMode[field],
-    });
+    setEditMode((prev) => ({
+      ...prev,
+      [field]: !prev[field],
+    }));
   };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-
-        setLocalUser({
-          ...localUser,
-          profilePicture: file,
-        });
-  
+      setLocalUser((prevState) => ({
+        ...prevState,
+        profilePicture: file,
+      }));
+      setfileChanged(true);
     }
   };
 
-  const handleSaveChanges =async (id) => {
-    // Gather all form data
-    console.log("id: ",id)
-    console.log("local user: ",localUser)
+  const handleSaveChanges = async () => {
     const formData = new FormData();
+  
+    // Loop over the localUser object and compare with the original user
     for (const key in localUser) {
-      console.log(key)
-      formData.append(key, localUser[key]);
+      if (localUser[key] !== user[key]) {
+        console.log(`Field changed: ${key}, Old: ${user[key]}, New: ${localUser[key]}`);
+        formData.append(key, localUser[key]);
+      }
     }
-    console.log(formData)
-    try{
-      const update=await axios.put(`http://localhost:3000/update/${id}`,formData, {headers: {
-        'Content-Type': 'multipart/form-data'
-      }})
-      console.log("updated successfully- ", update)
-      dispatch(fetchUser(id));
+    if(fileChanged){
+      formData.append('profilePicture', localUser.profilePicture);
     }
-    catch(error){
-      console.log(error)
+    let hasChanges = false;
+    for (let entry of formData.entries()) {
+      console.log("FormData entry: ", entry);  
+      hasChanges = true;
+    }
+    if (hasChanges) {
+      try {
+        const update = await axios.put(`http://localhost:3000/update/${props}`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        console.log('Updated successfully: ', update);
+        dispatch(fetchUser(props)); 
+        setIsChanged(false); 
+        setfileChanged(false);
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      console.log("No changes to update.");
     }
   };
-
+  
+  
   const handleProfilePictureClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click(); 
-    }
+    fileInputRef.current && fileInputRef.current.click();
   };
 
   return (
@@ -86,11 +105,10 @@ const Account = ({props}) => {
       <Lbar />
       <Container maxWidth="md" sx={{ marginTop: '2rem' }}>
         <Card sx={{ padding: '2rem', borderRadius: '10px', boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)', backgroundColor: '#f5f5f5' }}>
-          {/* Profile Section */}
           <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '2rem' }}>
             <Avatar
-              alt={user.username}
-              src={user.profilePicture}
+              alt={localUser.username}
+              src={localUser.profilePicture || ''}
               sx={{ width: 100, height: 100, marginRight: '1.5rem', backgroundColor: deepPurple[500] }}
             />
             <input
@@ -105,15 +123,14 @@ const Account = ({props}) => {
             </IconButton>
             <Box>
               <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-                {user.username}
+                {localUser.username}
               </Typography>
               <Typography variant="body2" color="textSecondary">
-                Joined on {user.dateOfJoining}
+                Joined on {localUser.dateOfJoining}
               </Typography>
             </Box>
           </Box>
 
-          {/* Bio Section */}
           <Typography variant="h6" gutterBottom>
             Bio
           </Typography>
@@ -121,7 +138,7 @@ const Account = ({props}) => {
             <TextField
               fullWidth
               variant="outlined"
-              value={user.bio}
+              value={localUser.bio || ''}
               onChange={(e) => handleInputChange('bio', e.target.value)}
               onBlur={() => handleEditModeChange('bio')}
               multiline
@@ -134,188 +151,49 @@ const Account = ({props}) => {
               onClick={() => handleEditModeChange('bio')}
               sx={{ cursor: 'pointer', padding: '8px', backgroundColor: '#e0e0e0', borderRadius: '5px' }}
             >
-              {user.bio}
+              {localUser.bio || 'Click to add bio'}
             </Typography>
           )}
 
-          {/* Contact Info */}
           <Typography variant="h6" sx={{ marginTop: '2rem' }} gutterBottom>
             Contact Information
           </Typography>
           <Grid container spacing={3}>
-            {/* Email */}
-            <Grid item xs={12}>
-              <Typography variant="body1">Email</Typography>
-              {editMode.email ? (
-                <TextField
-                  fullWidth
-                  variant="outlined"
-                  value={user.email}
-                  onChange={(e) => handleInputChange('email', e.target.value)}
-                  onBlur={() => handleEditModeChange('email')}
-                  autoFocus
-                />
-              ) : (
-                <Typography
-                  variant="body1"
-                  onClick={() => handleEditModeChange('email')}
-                  sx={{ cursor: 'pointer', padding: '8px', backgroundColor: '#e0e0e0', borderRadius: '5px' }}
-                >
-                  {user.email}
+            {['email', 'phone', 'street', 'city', 'landmark', 'dateOfBirth', 'employment'].map((field) => (
+              <Grid item xs={12} key={field}>
+                <Typography variant="body1" sx={{ textTransform: 'capitalize' }}>
+                  {field}
                 </Typography>
-              )}
-            </Grid>
-
-            {/* Phone */}
-            <Grid item xs={12}>
-              <Typography variant="body1">Phone</Typography>
-              {editMode.phone ? (
-                <TextField
-                  fullWidth
-                  variant="outlined"
-                  value={user.phone}
-                  onChange={(e) => handleInputChange('phone', e.target.value)}
-                  onBlur={() => handleEditModeChange('phone')}
-                  autoFocus
-                />
-              ) : (
-                <Typography
-                  variant="body1"
-                  onClick={() => handleEditModeChange('phone')}
-                  sx={{ cursor: 'pointer', padding: '8px', backgroundColor: '#e0e0e0', borderRadius: '5px' }}
-                >
-                  {user.phone}
-                </Typography>
-              )}
-            </Grid>
-
-            {/* Street */}
-            <Grid item xs={12}>
-              <Typography variant="body1">Street</Typography>
-              {editMode.street ? (
-                <TextField
-                  fullWidth
-                  variant="outlined"
-                  value={user.street}
-                  onChange={(e) => handleInputChange('street', e.target.value)}
-                  onBlur={() => handleEditModeChange('street')}
-                  autoFocus
-                />
-              ) : (
-                <Typography
-                  variant="body1"
-                  onClick={() => handleEditModeChange('street')}
-                  sx={{ cursor: 'pointer', padding: '8px', backgroundColor: '#e0e0e0', borderRadius: '5px' }}
-                >
-                  {user.street || 'Click to enter street'}
-                </Typography>
-              )}
-            </Grid>
-
-            {/* City */}
-            <Grid item xs={12}>
-              <Typography variant="body1">City</Typography>
-              {editMode.city ? (
-                <TextField
-                  fullWidth
-                  variant="outlined"
-                  value={user.city}
-                  onChange={(e) => handleInputChange('city', e.target.value)}
-                  onBlur={() => handleEditModeChange('city')}
-                  autoFocus
-                />
-              ) : (
-                <Typography
-                  variant="body1"
-                  onClick={() => handleEditModeChange('city')}
-                  sx={{ cursor: 'pointer', padding: '8px', backgroundColor: '#e0e0e0', borderRadius: '5px' }}
-                >
-                  {user.city || 'Click to enter city'}
-                </Typography>
-              )}
-            </Grid>
-
-            {/* Landmark */}
-            <Grid item xs={12}>
-              <Typography variant="body1">Landmark</Typography>
-              {editMode.landmark ? (
-                <TextField
-                  fullWidth
-                  variant="outlined"
-                  value={user.landmark}
-                  onChange={(e) => handleInputChange('landmark', e.target.value)}
-                  onBlur={() => handleEditModeChange('landmark')}
-                  autoFocus
-                />
-              ) : (
-                <Typography
-                  variant="body1"
-                  onClick={() => handleEditModeChange('landmark')}
-                  sx={{ cursor: 'pointer', padding: '8px', backgroundColor: '#e0e0e0', borderRadius: '5px' }}
-                >
-                  {user.landmark || 'Click to enter landmark'}
-                </Typography>
-              )}
-            </Grid>
-
-            {/* Date of Birth */}
-            <Grid item xs={12}>
-              <Typography variant="body1">Date of Birth</Typography>
-              {editMode.dateOfBirth ? (
-                <TextField
-                  fullWidth
-                  variant="outlined"
-                  type="date"
-                  value={user.dateOfBirth}
-                  onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
-                  onBlur={() => handleEditModeChange('dateOfBirth')}
-                  autoFocus
-                />
-              ) : (
-                <Typography
-                  variant="body1"
-                  onClick={() => handleEditModeChange('dateOfBirth')}
-                  sx={{ cursor: 'pointer', padding: '8px', backgroundColor: '#e0e0e0', borderRadius: '5px' }}
-                >
-                  {user.dateOfBirth || 'Click to enter date of birth'}
-                </Typography>
-              )}
-            </Grid>
-
-            {/* Employment */}
-            <Grid item xs={12}>
-              <Typography variant="body1">Employment</Typography>
-              {editMode.employment ? (
-                <TextField
-                  fullWidth
-                  variant="outlined"
-                  value={user.employment}
-                  onChange={(e) => handleInputChange('employment', e.target.value)}
-                  onBlur={() => handleEditModeChange('employment')}
-                  autoFocus
-                />
-              ) : (
-                <Typography
-                  variant="body1"
-                  onClick={() => handleEditModeChange('employment')}
-                  sx={{ cursor: 'pointer', padding: '8px', backgroundColor: '#e0e0e0', borderRadius: '5px' }}
-                >
-                  {user.employment || 'Click to enter employment status'}
-                </Typography>
-              )}
-            </Grid>
+                {editMode[field] ? (
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    type={field === 'dateOfBirth' ? 'date' : 'text'}
+                    value={localUser[field] || ''}
+                    onChange={(e) => handleInputChange(field, e.target.value)}
+                    onBlur={() => handleEditModeChange(field)}
+                    autoFocus
+                  />
+                ) : (
+                  <Typography
+                    variant="body1"
+                    onClick={() => handleEditModeChange(field)}
+                    sx={{ cursor: 'pointer', padding: '8px', backgroundColor: '#e0e0e0', borderRadius: '5px' }}
+                  >
+                    {localUser[field] || `Click to enter ${field}`}
+                  </Typography>
+                )}
+              </Grid>
+            ))}
           </Grid>
 
-          {/* Save Changes Button */}
-          <Box sx={{ textAlign: 'center', marginTop: '2rem' }}>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={()=>{handleSaveChanges(props)}}
-            >
-              Save Changes
-            </Button>
-          </Box>
+          {(isChanged || fileChanged) && (
+            <Box sx={{ textAlign: 'center', marginTop: '2rem' }}>
+              <Button variant="contained" color="primary" onClick={handleSaveChanges}>
+                Save Changes
+              </Button>
+            </Box>
+          )}
         </Card>
       </Container>
     </div>

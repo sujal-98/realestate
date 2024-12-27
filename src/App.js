@@ -14,6 +14,7 @@ import Sell from './pages/sell';
 import Buy from './pages/buy';
 import Rent from './pages/rent';
 import Saved from './pages/Saved';
+import Listing from './pages/listing';
 
 function App() {
   const [userId, setUserId] = useState('');
@@ -39,6 +40,8 @@ function App() {
         <Route path="/profile/buy/:userId" element={<Protexted><Buy props={userId} /></Protexted>} />
         <Route path="/profile/rent/:userId" element={<Protexted><Rent props={userId} /></Protexted>} />
         <Route path="/profile/save/:userId" element={<Protexted><Saved props={userId} /></Protexted>} />
+        <Route path="/profile/listing" element={<Protexted><Listing/></Protexted>} />
+
       </Routes>
     </Router></Provider>
   );

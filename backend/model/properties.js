@@ -20,10 +20,16 @@ const propertySchema = new Schema({
     required: true,
   }],
   
+  title: {
+    type: String,
+    required: true,
+  },
+
   description: {
     type: String,
     required: true,
   },
+  
   datePosted: {
     type: Date,
     default: Date.now,
@@ -40,9 +46,31 @@ const propertySchema = new Schema({
     required: true,
   },
   location: {
+    state:{
     type: String,
     required: true,
-  },
+  
+},
+city:{
+  type: String,
+  required: true,
+
+},
+ address:{
+  type: String,
+  required: true,
+
+},
+latitude:{
+  type:Number,
+  required:true,
+},
+longitude:{
+  type:Number,
+  required:true
+}
+
+},
   price: {
     type: Number,
     required: true,
@@ -52,9 +80,18 @@ const propertySchema = new Schema({
     enum: ['available', 'sold', 'rented'],
     default: 'available',
   },
-  amenities: [{
-    type: String,
-  }],
+  yearBuilt:{
+    type:Number,
+    required:true
+  }
+  ,
+  amenities: {
+    bedrooms: { type: Number, required: true },
+    bathrooms: { type: Number, required: true },
+    parking: { type: Number, required:true },
+    area: { type: Number, required:true },
+    balcony: { type: Number, default: 0 },
+  },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Property', propertySchema);

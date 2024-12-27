@@ -39,9 +39,6 @@ function checkFileType(file, cb) {
 }
 
 
-  
-
-
 //fetching user's detail from its id
 router.get('/account/:id', async (req, res) => { 
     const id = req.params.id; 

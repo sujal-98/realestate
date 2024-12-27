@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Container, Typography, Grid, Box, Card, CardContent, CardActions, Button, Avatar, CircularProgress } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart, faEye } from '@fortawesome/free-solid-svg-icons';
@@ -48,6 +49,7 @@ const SkyBackground = styled(Box)(({ theme }) => ({
 
 const Rent = () => {
   const dispatch = useDispatch();
+  const Navigate=useNavigate();
 
   useEffect(() => {
     dispatch(fetchRentProp('rental'));
@@ -56,6 +58,10 @@ const Rent = () => {
   const properties = useSelector((state) => state.buy.prop);
   const loading = useSelector((state) => state.buy.loading);
   const error = useSelector((state) => state.buy.error);
+
+  const handleClick=(info)=>{
+    Navigate('/profile/listing',{state:info})
+  }
 
   return (
     <SkyBackground>
@@ -86,7 +92,7 @@ const Rent = () => {
             {error}
           </Typography>
         ) : (
-          <Grid container spacing={4}>
+          <Grid container spacing={4}>j
             {properties.map((property) => (
               <Grid item xs={12} sm={6} md={4} key={property._id}>
                 <motion.div
@@ -106,7 +112,9 @@ const Rent = () => {
                         transform: 'scale(1.05)',
                         boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)',
                       },
+                      zIndex:30
                     }}
+                    onClick={()=>{handleClick(property)}}
                   >
                     <Box sx={{ position: 'relative' }}>
                       <img
@@ -116,7 +124,7 @@ const Rent = () => {
                       />
                       <CardContent sx={{ flexGrow: 1, p: 2 }}>
                         <Typography variant="h6" component="div" gutterBottom sx={{ fontWeight: 'bold', fontSize: '1.1rem', color: '#000' }}>
-                          {property.location}
+                          {property.title}
                         </Typography>
                         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                           {property.description}

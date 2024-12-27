@@ -34,6 +34,7 @@ export const fetchUser = (userId) => {
       });
   };
 };
+
 export const updateUser = (userId,updatedData) => {
   return (dispatch) => {
     dispatch(fetchUserRequest());
@@ -129,12 +130,14 @@ export const fetchSavedFailure = (prop) => {
     payload: prop
   };
 };
+
 export const add = (prop) => {
   return {
     type: 'ADD_PROPERTY',
     payload: prop
   };
 };
+
 export const remove = (prop) => {
   return {
     type: 'REMOVE_PROPERTY',
@@ -163,6 +166,7 @@ export const fetchSaveFull = (userId) => async (dispatch) => {
       dispatch({ type: 'FETCH_FULLSAVED_FAILURE', payload: error.message });
   }
 };
+
 // Add Property
 export const addProperty = (userId, propertyId) => async (dispatch) => {
   try {
