@@ -5,9 +5,21 @@ import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import L from 'leaflet';
 import Lbar from '../comp/loggesNavbar/Lbar';
 import 'leaflet/dist/leaflet.css';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import TextField from '@mui/material/TextField';
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
 import axios from 'axios';
 
-const Listing = () => {
+const Listing = ({prop}) => {
   const [activeImage, setActiveImage] = useState(0);
   const[seller,setSeller]=useState({})
   const location = useLocation();
@@ -67,6 +79,65 @@ const Listing = () => {
       popupAnchor: [1, -34],
       shadowSize: [41, 41]
     });
+    const [open, setOpen] = useState(false);
+    const [activeTab, setActiveTab] = useState(0);
+    const [formData, setFormData] = useState({
+      subject: '',
+      message: ''
+    });
+  
+    const handleTabChange = (event, newValue) => {
+      setActiveTab(newValue);
+    };
+  
+    const handleOpen = () => {
+      setOpen(true);
+    };
+  
+    const handleClose = () => {
+      setOpen(false);
+      setActiveTab(0);
+      setFormData({
+        subject: '',
+        message: ''
+      });
+    };
+  
+    const handleChange = (e) => {
+      const { name, value } = e.target;
+      setFormData(prevState => ({
+        ...prevState,
+        [name]: value
+      }));
+    };
+  
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      console.log('Form submitted:', formData);
+      handleClose();
+      const form={
+        subject:formData.subject,
+        message:formData.message,
+        senderId:seller.userId._id,
+        recieverId:data.sellerId._id,
+        }
+      console.log("form ",form)
+      try{
+        const response=await axios.post(`http://localhost:3000/addNotification`,form)
+        if(response){
+          console.log(response.data)
+          alert(response.data.message)
+        }
+        else{
+          alert("failed")
+        }
+      }
+      catch(error){
+        console.error(error);
+      }
+    };
+  
+    
     
 
 
@@ -113,10 +184,15 @@ const Listing = () => {
             <div className="absolute inset-0 bg-black/5" />
             
           </div>
-          <div className="absolute  bg-white px-4 py-2 rounded-lg shadow-lg z-10" style={{right:'20rem',bottom:'9.2rem'}}>
-              <p className="font-semibold">{data.location.address}</p>
-              <p className="text-sm text-gray-600">{"LAT: "+data.location.latitude}{"  -  LONG: "+ data.location.longitude}</p>
-            </div>
+          <div 
+  className="absolute bg-white px-4 py-2 rounded-lg shadow-lg z-10 "
+  style={{ right: '20rem', bottom: '8.6rem' }}
+>
+  <p className="font-semibold">{data.location.address}</p>
+  <p className="text-sm text-gray-600 truncate">
+    {"LAT: " + data.location.latitude} {"  -  "}{"LONG: " + data.location.longitude}
+  </p>
+</div>
           
         </div>
         
@@ -187,12 +263,83 @@ const Listing = () => {
           </div>
 
           <button className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors mb-3">
-            Connect with Seller
-          </button>
-          
-          <button className="w-full border border-blue-500 text-blue-500 hover:bg-blue-50 font-semibold py-3 px-6 rounded-lg transition-colors">
             Save Property
           </button>
+          <Button 
+        variant="contained" 
+        color="primary" 
+        onClick={handleOpen}
+        sx={{
+          width: "100%",
+          borderWidth: "1px",
+          borderColor: "blue.500",
+          color: "blue.500",
+          "&:hover": {
+            backgroundColor: "blue.50",
+          },
+          fontWeight: "600",
+          py: 3,
+          px: 6,
+          borderRadius: "lg",
+          transitionProperty: "background-color",
+          transitionTimingFunction: "ease-in-out",
+        }}
+        
+      >
+        Connect with Seller
+      </Button>
+      <Dialog 
+        open={open} 
+        onClose={handleClose}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle>Contact Seller</DialogTitle>
+        <Tabs
+          value={activeTab}
+          onChange={handleTabChange}
+          sx={{ px: 2, borderBottom: 1, borderColor: 'divider' }}
+        >
+          <Tab label="Write" />
+        </Tabs>
+        <form onSubmit={handleSubmit}>
+          <DialogContent>
+            
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <TextField
+                  name="subject"
+                  label="Subject"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  fullWidth
+                  required
+                  variant="outlined"
+                />
+                <TextField
+                  name="message"
+                  label="Message"
+                  value={formData.message}
+                  onChange={handleChange}
+                  fullWidth
+                  required
+                  multiline
+                  rows={6}
+                  variant="outlined"
+                />
+              </Box>
+          
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} color="secondary">
+              Cancel
+            </Button>
+            <Button type="submit" color="primary" variant="contained">
+              Send Message
+            </Button>
+          </DialogActions>
+        </form>
+      </Dialog>
+
         </div>
       </div>
     </div>

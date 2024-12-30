@@ -44,8 +44,8 @@ router.get('/account/:id', async (req, res) => {
     const id = req.params.id; 
     console.log(id)
     try {
-        const user = await User.findOne(
-            { _id: id }
+        const user = await User.findById(
+            id
         ).exec();
         if (user) {
           console.log("check")

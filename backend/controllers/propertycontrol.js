@@ -1,5 +1,6 @@
 const { Types } = require('mongoose');
 const Property = require('../model/properties');
+const User=require("../model/user")
 const Seller = require('../model/seller');
 const express = require('express');
 const router = express.Router();
@@ -54,11 +55,14 @@ router.post('/upload/:id', upload, async (req, res) => {
 
   try {
     let seller = await Seller.findOne({ userId: objectId });
+    let user =await User.findById(userId)
     if (!seller) {
       seller = new Seller({
         userId: objectId
       });
       await seller.save();
+      user.seller=seller._id;
+      await user.save();
     }
 
     const uploadToCloudinary = (file, options) => {

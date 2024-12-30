@@ -19,6 +19,8 @@ import { Avatar } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
+import Toolbar from '@mui/material/Toolbar';
+import NotificationDropdown from './NotificationDropdown';
 
 const Lbar = ({ id }) => {
   const navigate = useNavigate();
@@ -150,6 +152,9 @@ const Lbar = ({ id }) => {
         </div>
         
         <div className="flex items-center gap-2">
+          <Toolbar>
+            <NotificationDropdown props={id} />
+          </Toolbar>
           <Button
             variant="contained"
             color="error"
