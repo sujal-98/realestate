@@ -64,16 +64,12 @@ const Account = ({ props }) => {
     // Loop over the localUser object and compare with the original user
     for (const key in localUser) {
       if (localUser[key] !== user[key]) {
-        console.log(`Field changed: ${key}, Old: ${user[key]}, New: ${localUser[key]}`);
         formData.append(key, localUser[key]);
       }
     }
-    if(fileChanged){
-      formData.append('profilePicture', localUser.profilePicture);
-    }
+  
     let hasChanges = false;
     for (let entry of formData.entries()) {
-      console.log("FormData entry: ", entry);  
       hasChanges = true;
     }
     if (hasChanges) {
@@ -126,7 +122,7 @@ const Account = ({ props }) => {
                 {localUser.username}
               </Typography>
               <Typography variant="body2" color="textSecondary">
-                Joined on {localUser.dateOfJoining}
+                Joined on {localUser.joiningDate}
               </Typography>
             </Box>
           </Box>

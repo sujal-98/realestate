@@ -5,10 +5,17 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import Avatar from '@mui/material/Avatar';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
-import Divider from '@mui/material/Divider';
 import Button from '@mui/material/Button';
+import CloseIcon from '@mui/icons-material/Close';
+import Divider from '@mui/material/Divider';
+import PhoneIcon from '@mui/icons-material/Phone';
+
 import axios from 'axios';
 import { formatDistanceToNow,parseISO } from 'date-fns';
 
@@ -20,6 +27,17 @@ const NotificationDropdown = ({ props }) => {
   const [sellerId, setSellerId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [selectedNotification, setSelectedNotification] = useState(null);
+
+
+  const closeNotificationDialog = () => {
+    setSelectedNotification(null);
+  };
+  const handleNotificationClick = (notification) => {
+    setSelectedNotification(notification);
+    markAsRead(notification.id);
+    handleClose();
+  };
 
   const unreadCount = notifications.unread.length;
 
@@ -228,6 +246,60 @@ console.log("seller id ",sid)
           </Box>
         )}
       </Menu>
+      <Dialog 
+        open={Boolean(selectedNotification)} 
+        onClose={closeNotificationDialog}
+        maxWidth="sm"
+        fullWidth
+      >
+        {selectedNotification && (
+          <>
+            <DialogTitle>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Typography variant="h6">{selectedNotification.sub}</Typography>
+                <IconButton onClick={closeNotificationDialog} size="small">
+                  <CloseIcon />
+                </IconButton>
+              </Box>
+            </DialogTitle>
+            <DialogContent>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                {/* Sender Info */}
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+                  {/* <Avatar 
+                    src={selectedNotification.sender.image}
+                    alt={selectedNotification.sender.name}
+                    sx={{ width: 56, height: 56 }}
+                  /> */}
+                  <Box>
+                    <Typography variant="subtitle1" fontWeight="bold">
+                      {selectedNotification.senderId.username}
+                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <PhoneIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+                      <Typography variant="body2" color="text.secondary">
+                        {1234567899}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Box>
+
+                <Divider />
+
+                {/* Message Content */}
+                <Typography variant="body1">
+                  {selectedNotification.msg}
+                </Typography>
+
+                {/* Timestamp */}
+                <Typography variant="caption" color="text.secondary" sx={{ mt: 2 }}>
+                  Sent {timeAgo(selectedNotification.time)}
+                </Typography>
+              </Box>
+            </DialogContent>
+          </>
+        )}
+      </Dialog>
     </Box>
   );
 };

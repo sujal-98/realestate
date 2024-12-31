@@ -19,7 +19,7 @@ const upload = multer({
     checkFileType(file, cb);
   }
 }).fields([
-  { name: 'profilePic', maxCount: 1 },
+  { name: 'profilePicture', maxCount: 1 },
 ]);
 
 function checkFileType(file, cb) {
@@ -83,11 +83,11 @@ router.put('/update/:id', upload ,async (req, res) => {
           uploadStream.end(file.buffer);
         });
       };
-      if (req.files && req.files['profilePic'] && req.files['profilePic'][0]) {
+      if (req.files && req.files['profilePicture'][0] ) {
         console.log("Profile picture upload detected");
-        const picUrl = await uploadToCloudinary(req.files['profilePic'][0], {
+        const picUrl = await uploadToCloudinary(req.files['profilePicture'][0], {
           resource_type: 'image',
-          folder: 'profilePic'
+          folder: 'profilePicture'
         });
         updatedData.profilePicture = picUrl;
       }

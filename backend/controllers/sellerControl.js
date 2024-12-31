@@ -47,7 +47,7 @@ router.post('/addNotification',async (req,res)=>{
 router.get('/getNotifications/:sellerId', async (req, res) => {
     const sellerId = req.params.sellerId;
     try {
-    const seller = await Seller.findById(sellerId).select('notifications');
+    const seller = await Seller.findById(sellerId).select('notifications').populate('notifications.senderId');
             if (!seller) {
                     return res.status(404).json({ message: 'Seller not found' });
                 }
