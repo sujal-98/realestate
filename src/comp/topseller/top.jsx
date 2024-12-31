@@ -23,7 +23,7 @@ const Top = () => {
 
   return (
     <div className="bg-white">
-      <div className="bg-green-100 py-8 px-4 text-center">
+      <div className="bg-green-300 py-8 px-4 text-center">
         <h1 className="text-2xl md:text-4xl text-gray-800 mb-2 font-thin">TOP SELLERS</h1>
         <h4 className="text-lg md:text-xl text-gray-600">
           Sellers with complete knowledge about locality and verified listings

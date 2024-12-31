@@ -13,12 +13,12 @@ import './pagecss/home.css';
 const Home = () => {
   return (
     <div>
-      <div style={{ height: "900px" }}>
+      <div style={{ height: "48rem" }}>
         <img
           src="/images/bg.jpg"
           alt="background"
           className="absolute inset-0 w-full object-cover"
-          style={{ zIndex: '-1', height: '900px' }}
+          style={{ zIndex: '-1', height: '48rem' }}
         />
         <Navbar />
         <Text />
