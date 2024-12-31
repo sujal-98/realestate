@@ -1,200 +1,184 @@
-import * as React from 'react';
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import Avatar from '@mui/material/Avatar';
-import { makeStyles } from '@mui/styles';
-import './styles.css'; // Import the CSS file for enhanced styles
-import { rental } from '../../resources/property';
+import React, { useState } from 'react';
+import { rental1 } from '../../resources/property';
 
-const useStyles = makeStyles({
-  card: {
-    borderRadius: '15px',
-    border: '2px solid #e0e0e0',
-    boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
-    transition: 'transform 0.2s, box-shadow 0.2s',
-    '&:hover': {
-      transform: 'translateY(-5px)',
-      boxShadow: '0px 8px 20px rgba(0, 0, 0, 0.2)',
-    },
-  },
-  media: {
-    borderRadius: '15px 15px 0 0',
-    height: '200px',
-    objectFit: 'cover',
-  },
-  content: {
-    padding: '16px',
-    color: '#333',
-  },
-  name: {
-    fontWeight: 600,
-    marginBottom: '8px',
-  },
-  description: {
-    fontSize: '0.9rem',
-    color: '#666',
-    marginBottom: '12px',
-  },
-  price: {
-    fontSize: '1rem',
-    fontWeight: 500,
-    color: '#555',
-  },
-  actions: {
-    padding: '16px',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  posterInfo: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  avatar: {
-    width: 30,
-    height: 30,
-    marginRight: '8px',
-  },
-  posterName: {
-    fontSize: '0.9rem',
-    fontWeight: 500,
-  },
-  button: {
-    backgroundColor: '#4caf50',
-    color: '#ffffff',
-    '&:hover': {
-      backgroundColor: '#45a049',
-    },
-  },
-  sliderContainer: {
-    margin: '20px 0',
-  },
-  header: {
-    textAlign: 'center',
-    marginBottom: '20px',
-  },
-  title: {
-    fontSize: '2rem',
-    fontWeight: 'bold',
-    marginBottom: '8px',
-  },
-  subtitle: {
-    fontSize: '1.2rem',
-    color: '#666',
-  },
-});
+const RentalCarousel = () => {
+  // Mock data for preview
+  const rental = rental1
+  const [currentIndex, setCurrentIndex] = React.useState(0);
+  const [favorites, setFavorites] = useState(new Set());
+  const [activeCard, setActiveCard] = useState(null);
 
-const Rental = () => {
-  const classes = useStyles();
-
-  const NextArrow = (props) => {
-    const { className, onClick } = props;
-    return (
-      <div
-        className={`${className} custom-arrow next-arrow`}
-        onClick={onClick}
-      />
+  const next = () => {
+    setCurrentIndex((prevIndex) => 
+      prevIndex === rental.length - 1 ? 0 : prevIndex + 1
     );
   };
 
-  const PrevArrow = (props) => {
-    const { className, onClick } = props;
-    return (
-      <div
-        className={`${className} custom-arrow prev-arrow`}
-        onClick={onClick}
-      />
+  const prev = () => {
+    setCurrentIndex((prevIndex) => 
+      prevIndex === 0 ? rental.length - 1 : prevIndex - 1
     );
   };
 
-  const settings = {
-    dots: false,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 3,
-    slidesToScroll: 1,
-    nextArrow: <NextArrow />,
-    prevArrow: <PrevArrow />,
-    responsive: [
-      {
-        breakpoint: 1024,
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 1,
-          infinite: true,
-          dots: false,
-        },
-      },
-      {
-        breakpoint: 600,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-          initialSlide: 1,
-        },
-      },
-    ],
+  const toggleFavorite = (id) => {
+    setFavorites(prev => {
+      const newFavorites = new Set(prev);
+      if (newFavorites.has(id)) {
+        newFavorites.delete(id);
+      } else {
+        newFavorites.add(id);
+      }
+      return newFavorites;
+    });
   };
 
   return (
-    <div className={classes.sliderContainer}>
-            <div className={classes.header}>
-      <Typography variant="h4" component="h1" className={classes.title} gutterBottom>
+    <div className=" mx-auto px-4 py-12 bg-gradient-to-b from-indigo-50 to-white" style={{width:"100%"}}>
+      {/* Header */}
+      <div className="text-center mb-12">
+        <h1 className="text-4xl font-bold text-indigo-900 mb-4 relative inline-block">
           AVAILABLE FOR RENT
-        </Typography>
-        <Typography variant="subtitle1" className={classes.subtitle}>
+          <div className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-indigo-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+        </h1>
+        <p className="text-lg text-indigo-600">
           Based on preferences of users like you
-        </Typography>
-        </div>
-      <Slider {...settings}>
-        {rental.map((property) => (
-          <div key={property.id} className="property-card-wrapper">
-            <Card className={classes.card}>
-              <CardMedia
-                component="img"
-                alt={property.name}
-                image={property.image}
-                className={classes.media}
-              />
-              <CardContent className={classes.content}>
-                <Typography gutterBottom variant="h5" component="div" className={classes.name}>
-                  {property.name}
-                </Typography>
-                <Typography variant="body2" className={classes.description}>
-                  {property.description}
-                </Typography>
-                <Typography variant="body2" className={classes.price}>
-                  Price: {property.price}
-                </Typography>
-              </CardContent>
-              <CardActions className={classes.actions}>
-                <div className={classes.posterInfo}>
-                  <Avatar
-                    src={property.posterAvatar}
-                    alt={property.posterName}
-                    className={classes.avatar}
-                  />
-                  <Typography className={classes.posterName}>
-                    Posted by: {property.posterName}
-                  </Typography>
+        </p>
+      </div>
+
+      {/* Carousel Container */}
+      <div className="relative">
+        <div className="overflow-hidden" >
+          <div className="flex gap-6 transition-transform duration-500 ease-out"
+               style={{ transform: `translateX(-${currentIndex * 100}%)` , height:'80%'}}>
+            {rental.map((property) => (
+              <div 
+                key={property.id} 
+                className="min-w-full md:min-w-[calc(50%-12px)] lg:min-w-[calc(33.333%-16px)]"
+                onMouseEnter={() => setActiveCard(property.id)}
+                onMouseLeave={() => setActiveCard(null)}
+              
+              >
+                <div className={`bg-white rounded-2xl shadow-lg transition-all duration-300 overflow-hidden border border-gray-100
+                  ${activeCard === property.id ? 'scale-105 shadow-2xl' : 'hover:shadow-xl'}`}
+                  style={{ marginTop:'2rem',
+                    marginBottom:'2rem',
+                  }}
+                  >
+                  {/* Property Image */}
+                  <div className="relative h-64 overflow-hidden group"
+                  style={{
+                    height: '18rem',
+                   
+                  }}>
+
+                    <img
+                      src={property.image}
+                      alt={property.name}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute top-4 right-4 bg-gradient-to-r from-purple-500 to-indigo-500 px-3 py-1 rounded-full text-sm font-semibold text-white shadow-lg">
+                      Featured
+                    </div>
+                    <button 
+                      onClick={() => toggleFavorite(property.id)}
+                      className="absolute top-4 left-4 p-2 rounded-full bg-white shadow-lg transition-transform duration-300 hover:scale-110"
+                    >
+                      <svg 
+                        className={`w-6 h-6 ${favorites.has(property.id) ? 'text-red-500' : 'text-gray-400'}`}
+                        fill={favorites.has(property.id) ? "currentColor" : "none"}
+                        viewBox="0 0 24 24" 
+                        stroke="currentColor"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  {/* Content */}
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors duration-300">
+                      {property.name}
+                    </h3>
+                    <p className="text-gray-600 mb-4">
+                      {property.description}
+                    </p>
+                    
+                    {/* Tags */}
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {property.tags.map(tag => (
+                        <span key={tag} className="px-3 py-1 bg-indigo-100 text-indigo-600 rounded-full text-sm font-medium">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                    
+                    <div className="text-lg font-semibold text-indigo-600 mb-6">
+                      {property.price}
+                    </div>
+
+                    {/* Posted By Section */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className="relative">
+                          <img
+                            src={property.ownerProfilePhoto}
+                            alt={property.ownerName}
+                            className="w-10 h-10 rounded-full border-2 border-indigo-200"
+                          />
+                          <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white"></div>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-500">Posted by</p>
+                          <p className="text-sm font-semibold text-gray-900">
+                            {property.ownerName}
+                          </p>
+                        </div>
+                      </div>
+                      <button className="bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white px-6 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
+                        Contact
+                      </button>
+                    </div>
+                  </div>
                 </div>
-                <Button variant="contained" className={classes.button}>
-                  Contact Now
-                </Button>
-              </CardActions>
-            </Card>
+              </div>
+            ))}
           </div>
-        ))}
-      </Slider>
+        </div>
+
+        {/* Navigation Buttons */}
+        <button
+          onClick={prev}
+          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-white p-3 rounded-full shadow-lg hover:bg-indigo-50 transition-colors duration-200 hover:scale-110 transform"
+        >
+          <svg className="w-6 h-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <button
+          onClick={next}
+          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-white p-3 rounded-full shadow-lg hover:bg-indigo-50 transition-colors duration-200 hover:scale-110 transform"
+        >
+          <svg className="w-6 h-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+
+        {/* Pagination Dots */}
+        <div className="flex justify-center mt-8 space-x-2">
+          {rental.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentIndex(index)}
+              className={`w-3 h-3 rounded-full transition-all duration-300 
+                ${currentIndex === index 
+                  ? 'bg-indigo-600 w-6' 
+                  : 'bg-indigo-200 hover:bg-indigo-300'}`}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
 
-export default Rental;
+export default RentalCarousel;

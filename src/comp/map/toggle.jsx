@@ -1,14 +1,37 @@
 import React, { useState } from 'react';
+import { MapPin, Navigation, Home, Coffee } from 'lucide-react';
 import Leaflet from './leaflet';
-import Verticle from './verticle';
+import Verticle from './verticle'
 
 const Toggle = () => {
   const [activeButton, setActiveButton] = useState(0);
-  const buttonLabels = ['Popular', 'Rentals', 'Affordable', 'LifeStyle'];
+  
+  // Button configurations with icons and gradients
+  const buttonConfigs = [
+    { 
+      label: 'Popular', 
+      icon: <Navigation size={18} />,
+      gradient: 'from-blue-600 to-indigo-600'
+    },
+    { 
+      label: 'Rentals', 
+      icon: <Home size={18} />,
+      gradient: 'from-purple-600 to-pink-600'
+    },
+    { 
+      label: 'Affordable', 
+      icon: <MapPin size={18} />,
+      gradient: 'from-emerald-600 to-teal-600'
+    },
+    { 
+      label: 'LifeStyle', 
+      icon: <Coffee size={18} />,
+      gradient: 'from-orange-600 to-rose-600'
+    }
+  ];
 
-  const handleClick = (buttonIndex) => {
-    setActiveButton(buttonIndex);
-  };
+  const [selectedLocation, setSelectedLocation] = useState('');
+
 
   const menuItems = [
     [
@@ -61,34 +84,79 @@ const Toggle = () => {
     ]
   ];
 
-  const [dataFromChild, setDataFromChild] = useState('');
-
-  const receiveDataFromChild = (data) => {
-    setDataFromChild(data);
-  };
-
-  return (
-    <div className="max-w-screen-lg mx-auto p-4 w-full h-full">
-      <div className="px-10 rounded-lg" style={{ backgroundColor:'#f0f0f0',width: '95%', height: '75px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        {buttonLabels.map((label, index) => (
-          <button
-            key={index}
-            className={`rounded-full py-2 px-9 mr-2 focus:outline-none ${
-              activeButton === index ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-700'
-            }`}
-            onClick={() => handleClick(index)}
+  const LocationList = ({ items, onSelect }) => (
+    <div className="w-1/3 pr-4 overflow-y-auto h-[500px]">
+      <div className="space-y-2">
+        {items.map((item) => (
+          <div
+            key={item.id}
+            onClick={() => onSelect(item.id)}
+            className={`
+              p-3 rounded-lg cursor-pointer transition-all duration-300
+              ${selectedLocation === item.id 
+                ? 'bg-gradient-to-r from-blue-50 to-indigo-50 shadow-md' 
+                : 'hover:bg-gray-50'}
+            `}
           >
-            {label}
-          </button>
+            <div className="flex items-center space-x-3">
+              <MapPin 
+                size={18} 
+                className={`${selectedLocation === item.name ? 'text-blue-500' : 'text-gray-400'}`}
+              />
+              <div>
+                <h3 className={`font-medium ${selectedLocation === item.name ? 'text-blue-600' : 'text-gray-700'}`}>
+                  {item.name}
+                </h3>
+                <p className="text-sm text-gray-500">
+                  {item.latitude.toFixed(4)}, {item.longitude.toFixed(4)}
+                </p>
+              </div>
+            </div>
+          </div>
         ))}
       </div>
-      {activeButton !== null && (
-        <div className="bg-white rounded-lg shadow-md p-4 flex justify-center " style={{width:'95%',height:'60%'}}>
-          <Verticle items={menuItems[activeButton]} passer={{ sendDataToParent: receiveDataFromChild }} />
-          {console.log(dataFromChild)}
-          <Leaflet label={dataFromChild} items={menuItems[activeButton]} />
+    </div>
+  );
+
+  return (
+    <div className="max-w-6xl mx-auto p-6 space-y-6">
+      {/* Navigation Buttons */}
+      <div className="bg-white rounded-2xl shadow-lg p-4">
+        <div className="flex justify-center space-x-4">
+          {buttonConfigs.map((config, index) => (
+            <button
+              key={index}
+              onClick={() => setActiveButton(index)}
+              className={`
+                flex items-center space-x-2 px-6 py-3 rounded-xl
+                transition-all duration-300 transform
+                ${activeButton === index 
+                  ? `bg-gradient-to-r ${config.gradient} text-white shadow-lg scale-105` 
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}
+              `}
+            >
+              {config.icon}
+              <span>{config.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Content Area */}
+      <div className="bg-white rounded-2xl shadow-lg p-6">
+        <div className="flex space-x-6">
+          <LocationList 
+            items={menuItems[activeButton] || []} 
+            onSelect={setSelectedLocation}
+          />
+           {activeButton !== null && (
+        <div className="bg-white rounded-lg shadow-md p-4 flex justify-center " style={{width:'100%',height:'90%'}}>
+         
+          <Leaflet label={selectedLocation} items={menuItems[activeButton]} />
         </div>
       )}
+        </div>
+      </div>
     </div>
   );
 };

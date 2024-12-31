@@ -1,221 +1,212 @@
-import * as React from 'react';
-import Slider from "react-slick";
-import { useSwipeable } from 'react-swipeable';
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import Avatar from '@mui/material/Avatar';
-import { makeStyles } from '@mui/styles';
-import { recently } from '../../resources/property';
-import './styles.css'; 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBookmark } from '@fortawesome/free-regular-svg-icons';
+import React, { useState } from 'react';
+import { rental1 } from '../../resources/property';
 
-// Define styles using makeStyles
-const useStyles = makeStyles({
-  card: {
-    borderRadius: '15px',
-    border: '2px solid #e0e0e0',
-    boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
-    transition: 'transform 0.2s, box-shadow 0.2s',
-    '&:hover': {
-      transform: 'translateY(-5px)',
-      boxShadow: '0px 8px 20px rgba(0, 0, 0, 0.2)',
-    },
-  },
-  media: {
-    borderRadius: '15px 15px 0 0',
-    height: '200px',
-    objectFit: 'cover',
-  },
-  content: {
-    padding: '16px',
-    color: '#333',
-  },
-  name: {
-    fontWeight: 600,
-    marginBottom: '8px',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  description: {
-    fontSize: '0.9rem',
-    color: '#666',
-    marginBottom: '12px',
-  },
-  price: {
-    fontSize: '1rem',
-    fontWeight: 500,
-    color: '#555',
-  },
-  actions: {
-    padding: '16px',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  posterInfo: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  avatar: {
-    width: 30,
-    height: 30,
-    marginRight: '8px',
-  },
-  posterName: {
-    fontSize: '0.9rem',
-    fontWeight: 500,
-  },
-  button: {
-    backgroundColor: '#4caf50',
-    color: '#ffffff',
-    '&:hover': {
-      backgroundColor: '#45a049',
-    },
-  },
-  sliderContainer: {
-    margin: '20px 0',
-  },
-  header: {
-    textAlign: 'center',
-    marginBottom: '20px',
-  },
-  title: {
-    fontSize: '2rem',
-    fontWeight: 'bold',
-    marginBottom: '8px',
-  },
-  subtitle: {
-    fontSize: '1.2rem',
-    color: '#666',
-  },
-  saveIcon: {
-    cursor: 'pointer',
-  },
-});
+const SalesCarousel = () => {
+  // Mock data for preview
+  const sales = rental1
 
-const Recently = () => {
-  const classes = useStyles();
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [favorites, setFavorites] = useState(new Set());
+  const [activeCard, setActiveCard] = useState(null);
 
-  const NextArrow = (props) => {
-    const { className, onClick } = props;
-    return (
-      <div
-        className={`${className} custom-arrow next-arrow`}
-        onClick={onClick}
-      />
+  const next = () => {
+    setCurrentIndex((prevIndex) => 
+      prevIndex === sales.length - 1 ? 0 : prevIndex + 1
     );
   };
 
-  const PrevArrow = (props) => {
-    const { className, onClick } = props;
-    return (
-      <div
-        className={`${className} custom-arrow prev-arrow`}
-        onClick={onClick}
-      />
+  const prev = () => {
+    setCurrentIndex((prevIndex) => 
+      prevIndex === 0 ? sales.length - 1 : prevIndex - 1
     );
   };
 
-  const settings = {
-    dots: false,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 3,
-    slidesToScroll: 1,
-    autoplay: true,         // Enable autoplay
-    autoplaySpeed: 3000,    // Speed in milliseconds (3 seconds)
-    nextArrow: <NextArrow />,
-    prevArrow: <PrevArrow />,
-    responsive: [
-      {
-        breakpoint: 1024,
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 1,
-          infinite: true,
-          dots: false
-        }
-      },
-      {
-        breakpoint: 600,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-          initialSlide: 1
-        }
+  const toggleFavorite = (id) => {
+    setFavorites(prev => {
+      const newFavorites = new Set(prev);
+      if (newFavorites.has(id)) {
+        newFavorites.delete(id);
+      } else {
+        newFavorites.add(id);
       }
-    ]
+      return newFavorites;
+    });
   };
-
-  const swipeHandlers = useSwipeable({
-    onSwipedLeft: () => document.querySelector('.next-arrow').click(),
-    onSwipedRight: () => document.querySelector('.prev-arrow').click(),
-    preventDefaultTouchmoveEvent: true,
-    trackMouse: true, // This ensures touchpad support
-    trackTouch: true  // Ensures touch events are tracked as well
-  });
 
   return (
-    <div className={classes.sliderContainer} {...swipeHandlers}>
-      <div className={classes.header}>
-        <Typography variant="h4" component="h1" className={classes.title} gutterBottom>
-          RECENTLY ADDED
-        </Typography>
-        <Typography variant="subtitle1" className={classes.subtitle}>
-          Based on preferences of users like you
-        </Typography>
+    <div className=" mx-auto px-4 py-12 bg-gradient-to-b from-orange-50 to-white" style={{
+      width:'100%'
+    }}>
+      {/* Header */}
+      <div className="text-center mb-12">
+        <h1 className="text-4xl font-bold text-orange-900 mb-4 relative inline-block">
+          AVAILABLE FOR SALE
+          <div className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-amber-500 to-orange-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+        </h1>
+        <p className="text-lg text-orange-600">
+          Discover your dream home
+        </p>
       </div>
-      <Slider {...settings}>
-        {recently.map(property => (
-          <div key={property.id} className="property-card-wrapper">
-            <Card className={classes.card}>
-              <CardMedia
-                component="img"
-                alt={property.name}
-                image={property.image}
-                className={classes.media}
-              />
-              <CardContent className={classes.content}>
-                <Typography gutterBottom variant="h6" component="div" className={classes.name}>
-                  <span className="property-name">{property.name}</span>
-                  <FontAwesomeIcon icon={faBookmark} className={classes.saveIcon} />
-                </Typography>
-                <Typography variant="body2" className={classes.description}>
-                  {property.description}
-                </Typography>
-                <Typography variant="h6" className={classes.price}>
-                  Price: {property.price}
-                </Typography>
-              </CardContent>
-              <CardActions className={classes.actions}>
-                <div className={classes.posterInfo}>
-                  <Avatar
-                    src={property.posterAvatar}
-                    alt={property.posterName}
-                    className={classes.avatar}
-                  />
-                  <Typography className={classes.posterName}>
-                    Posted by: {property.posterName}
-                  </Typography>
+
+      {/* Carousel Container */}
+      <div className="relative">
+        <div className="overflow-hidden">
+          <div className="flex gap-6 transition-transform duration-500 ease-out"
+               style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
+            {sales.map((property) => (
+              <div 
+                key={property.id} 
+                className="min-w-full md:min-w-[calc(50%-12px)] lg:min-w-[calc(33.333%-16px)]"
+                onMouseEnter={() => setActiveCard(property.id)}
+                onMouseLeave={() => setActiveCard(null)}
+              >
+                <div className={`bg-white rounded-2xl shadow-lg transition-all duration-300 overflow-hidden border border-orange-100
+                  ${activeCard === property.id ? 'scale-105 shadow-2xl' : 'hover:shadow-xl'}`}
+                  style={{ marginTop:'2rem',
+                    marginBottom:'2rem',
+                  }}
+                  >
+                  {/* Property Image */}
+                  <div className="relative  overflow-hidden group" style={{
+                    height: '18rem',
+                   
+                  }} >
+                    <img
+                      src={property.image}
+                      alt={property.name}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute top-4 right-4 bg-gradient-to-r from-amber-500 to-orange-500 px-3 py-1 rounded-full text-sm font-semibold text-white shadow-lg">
+                      New Listing
+                    </div>
+                    <button 
+                      onClick={() => toggleFavorite(property.id)}
+                      className="absolute top-4 left-4 p-2 rounded-full bg-white shadow-lg transition-transform duration-300 hover:scale-110"
+                    >
+                      <svg 
+                        className={`w-6 h-6 ${favorites.has(property.id) ? 'text-red-500' : 'text-gray-400'}`}
+                        fill={favorites.has(property.id) ? "currentColor" : "none"}
+                        viewBox="0 0 24 24" 
+                        stroke="currentColor"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  {/* Content */}
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-orange-600 transition-colors duration-300">
+                      {property.name}
+                    </h3>
+                    
+                    {/* Property Stats */}
+                    <div className="flex items-center gap-4 mb-4 text-gray-600">
+                      <div className="flex items-center">
+                        <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                        </svg>
+                        {property.sqft} sq.ft
+                      </div>
+                      <div className="flex items-center">
+                        <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        {property.beds} beds
+                      </div>
+                      <div className="flex items-center">
+                        <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        {property.baths} baths
+                      </div>
+                    </div>
+                    
+                    <p className="text-gray-600 mb-4">
+                      {property.description}
+                    </p>
+                    
+                    {/* Tags */}
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {property.tags.map(tag => (
+                        <span key={tag} className="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-sm font-medium">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                    
+                    <div className="text-2xl font-bold text-orange-600 mb-6">
+                      {property.price}
+                    </div>
+
+                    {/* Posted By Section */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className="relative">
+                          <img
+                            src={property.ownerProfilePhoto}
+                            alt={property.ownerName}
+                            className="w-10 h-10 rounded-full border-2 border-orange-200"
+                          />
+                          <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white"></div>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-500">Listed by</p>
+                          <p className="text-sm font-semibold text-gray-900">
+                            {property.ownerName}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <button className="bg-white border-2 border-orange-500 text-orange-500 px-4 py-2 rounded-lg transition-all duration-300 hover:bg-orange-50">
+                          Details
+                        </button>
+                        <button className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-6 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
+                          Contact
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <Button variant="contained" className={classes.button}>
-                  More Details
-                </Button>
-              </CardActions>
-            </Card>
+              </div>
+            ))}
           </div>
-        ))}
-      </Slider>
+        </div>
+
+        {/* Navigation Buttons */}
+        <button
+          onClick={prev}
+          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-white p-3 rounded-full shadow-lg hover:bg-orange-50 transition-colors duration-200 hover:scale-110 transform"
+        >
+          <svg className="w-6 h-6 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <button
+          onClick={next}
+          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-white p-3 rounded-full shadow-lg hover:bg-orange-50 transition-colors duration-200 hover:scale-110 transform"
+        >
+          <svg className="w-6 h-6 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+
+        {/* Pagination Dots */}
+        <div className="flex justify-center mt-8 space-x-2">
+          {sales.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentIndex(index)}
+              className={`w-3 h-3 rounded-full transition-all duration-300 
+                ${currentIndex === index 
+                  ? 'bg-orange-600 w-6' 
+                  : 'bg-orange-200 hover:bg-orange-300'}`}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   );
-}
+};
 
-export default Recently;
+export default SalesCarousel;

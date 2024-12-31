@@ -24,7 +24,7 @@ const Home = () => {
         <Text />
       </div>
 
-      <Swiper
+      {/* <Swiper
         spaceBetween={50}
         slidesPerView={1}
         autoplay={{
@@ -49,8 +49,8 @@ const Home = () => {
                 <h2 className="text-white text-4xl font-bold">Beautiful Scenery {index + 1}</h2>
               </div>
             </SwiperSlide>
-          ))}
-      </Swiper>
+          ))} */}
+      {/* </Swiper> */}
 
       <Recently />
       <Rental />

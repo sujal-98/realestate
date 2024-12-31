@@ -1,4 +1,4 @@
- const rental = [
+ const rental1 = [
   {
       id: 1,
       name: "Risland Sky Mansion",
@@ -8,10 +8,14 @@
       image: "images/recently/image1.jpg",
       ownerName: "John Doe",
       ownerProfileLink: "https://example.com/johndoe",
-      ownerProfilePhoto: "images/owners/johndoe.jpg",
+      ownerProfilePhoto: "./images/noprofile.png",
       rating: 4.8,
       datePosted: "2024-06-15",
-      impressions: 1200
+      impressions: 1200,
+      tags: ["Smart Home", "Pool", "Theater"],
+      sqft: "4,500",
+      beds: 5,
+      baths: 4.5
   },
   {
       id: 2,
@@ -22,10 +26,14 @@
       image: "images/recently/image2.jpg",
       ownerName: "Emily Smith",
       ownerProfileLink: "https://example.com/emilysmith",
-      ownerProfilePhoto: "images/owners/emilysmith.jpg",
+      ownerProfilePhoto: "./images/noprofile.png",
       rating: 4.5,
       datePosted: "2024-06-14",
-      impressions: 950
+      impressions: 950,
+      tags: ["Smart Home", "Pool", "Theater"],
+      sqft: "4,500",
+      beds: 5,
+      baths: 4.5
   },
   {
       id: 3,
@@ -36,10 +44,14 @@
       image: "images/recently/image3.jpg",
       ownerName: "William Brown",
       ownerProfileLink: "https://example.com/williambrown",
-      ownerProfilePhoto: "images/owners/williambrown.jpg",
+      ownerProfilePhoto: "./images/noprofile.png",
       rating: 4.7,
       datePosted: "2024-06-13",
-      impressions: 1100
+      impressions: 1100,
+      tags: ["Smart Home", "Pool", "Theater"],
+      sqft: "4,500",
+      beds: 5,
+      baths: 4.5
   },
   {
       id: 4,
@@ -50,10 +62,14 @@
       image: "images/recently/image4.jpg",
       ownerName: "Sophia Davis",
       ownerProfileLink: "https://example.com/sophiadavis",
-      ownerProfilePhoto: "images/owners/sophiadavis.jpg",
+      ownerProfilePhoto: "./images/noprofile.png",
       rating: 4.6,
       datePosted: "2024-06-12",
-      impressions: 1300
+      impressions: 1300,
+      tags: ["Smart Home", "Pool", "Theater"],
+      sqft: "4,500",
+      beds: 5,
+      baths: 4.5
   },
   {
       id: 5,
@@ -64,10 +80,14 @@
       image: "images/recently/image5.jpg",
       ownerName: "James Wilson",
       ownerProfileLink: "https://example.com/jameswilson",
-      ownerProfilePhoto: "images/owners/jameswilson.jpg",
+      ownerProfilePhoto: "./images/noprofile.png",
       rating: 4.4,
       datePosted: "2024-06-11",
-      impressions: 900
+      impressions: 900,
+      tags: ["Smart Home", "Pool", "Theater"],
+      sqft: "4,500",
+      beds: 5,
+      baths: 4.5
   },
   {
       id: 6,
@@ -78,10 +98,14 @@
       image: "images/recently/image6.jpg",
       ownerName: "Linda Martinez",
       ownerProfileLink: "https://example.com/lindamartinez",
-      ownerProfilePhoto: "images/owners/lindamartinez.jpg",
+      ownerProfilePhoto: "./images/noprofile.png",
       rating: 4.9,
       datePosted: "2024-06-10",
-      impressions: 1400
+      impressions: 1400,
+      tags: ["Smart Home", "Pool", "Theater"],
+      sqft: "4,500",
+      beds: 5,
+      baths: 4.5
   },
   {
       id: 7,
@@ -92,10 +116,14 @@
       image: "images/recently/image7.jpg",
       ownerName: "David Lee",
       ownerProfileLink: "https://example.com/davidlee",
-      ownerProfilePhoto: "images/owners/davidlee.jpg",
+      ownerProfilePhoto: "./images/noprofile.png",
       rating: 4.8,
       datePosted: "2024-06-09",
-      impressions: 1600
+      impressions: 1600,
+      tags: ["Smart Home", "Pool", "Theater"],
+      sqft: "4,500",
+      beds: 5,
+      baths: 4.5
   },
   {
       id: 8,
@@ -106,10 +134,14 @@
       image: "images/recently/image8.jpg",
       ownerName: "Michael Johnson",
       ownerProfileLink: "https://example.com/michaeljohnson",
-      ownerProfilePhoto: "images/owners/michaeljohnson.jpg",
+      ownerProfilePhoto: "./images/noprofile.png",
       rating: 4.7,
       datePosted: "2024-06-08",
-      impressions: 1000
+      impressions: 1000,
+      tags: ["Smart Home", "Pool", "Theater"],
+      sqft: "4,500",
+      beds: 5,
+      baths: 4.5
   },
   {
       id: 9,
@@ -120,10 +152,14 @@
       image: "images/recently/image9.jpg",
       ownerName: "Sarah Taylor",
       ownerProfileLink: "https://example.com/sarahtaylor",
-      ownerProfilePhoto: "images/owners/sarahtaylor.jpg",
+      ownerProfilePhoto: "./images/noprofile.png",
       rating: 4.3,
       datePosted: "2024-06-07",
-      impressions: 800
+      impressions: 800,
+      tags: ["Smart Home", "Pool", "Theater"],
+      sqft: "4,500",
+      beds: 5,
+      baths: 4.5
   },
   {
       id: 10,
@@ -134,10 +170,14 @@
       image: "images/recently/image10.jpg",
       ownerName: "Laura Harris",
       ownerProfileLink: "https://example.com/lauraharris",
-      ownerProfilePhoto: "images/owners/lauraharris.jpg",
+      ownerProfilePhoto: "./images/noprofile.png",
       rating: 4.8,
       datePosted: "2024-06-06",
-      impressions: 1200
+      impressions: 1200,
+      tags: ["Smart Home", "Pool", "Theater"],
+      sqft: "4,500",
+      beds: 5,
+      baths: 4.5
   }
 ];
 
@@ -284,4 +324,4 @@ const recently = [
   }
 ];
 
-module.exports = { recently, rental };
+module.exports = { recently, rental1 };
