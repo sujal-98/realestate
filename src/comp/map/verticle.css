@@ -1,0 +1,22 @@
+.vertical-menu {
+    width: 200px;
+    background-color: #f4f4f4;
+    border-radius: 5px;
+    padding: 10px;
+  }
+  
+  .menu-item {
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .menu-item:last-child {
+    border-bottom: none;
+  }
+  
+  .menu-item:hover {
+    background-color: #ddd;
+  }
+  
