@@ -1,0 +1,17 @@
+/* Basic styling */
+body {
+    font-family: Arial, sans-serif;
+}
+
+/* Typewriter effect */
+#typewriter-text {
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+/* Grey text for "perfect" */
+.grey-text {
+    color: rgb(240, 238, 87);
+}
+
