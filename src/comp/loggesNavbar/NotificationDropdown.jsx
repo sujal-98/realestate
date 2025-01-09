@@ -35,7 +35,7 @@ const NotificationDropdown = ({ props }) => {
   };
   const handleNotificationClick = (notification) => {
     setSelectedNotification(notification);
-    markAsRead(notification.id);
+    // markAsRead(notification.id);
     handleClose();
   };
 
@@ -108,25 +108,6 @@ console.log("seller id ",sid)
 
   const handleClose = () => {
     setAnchorEl(null);
-  };
-
-  const markAsRead = async (id) => {
-    // try {
-    //   // Optimistically update UI
-    //   setNotifications(prev => ({
-    //     unread: prev.unread.filter(n => n.id !== id),
-    //     read: [...prev.read, ...prev.unread.filter(n => n.id === id)]
-    //   }));
-
-    //   // Make API call to update server
-    //   await axios.post(`${API_BASE_URL}/markNotificationRead/${id}`);
-      
-    //   handleClose();
-    // } catch (err) {
-    //   console.error('Error marking notification as read:', err);
-    //   // Revert optimistic update if needed
-    //   await fetchNotifications(sellerId);
-    // }
   };
 
   const markAllAsRead = async () => {
@@ -209,7 +190,7 @@ console.log("seller id ",sid)
           [...notifications.unread, ...notifications.read].map((notification) => (
             <MenuItem
               key={notification.id}
-              onClick={() => markAsRead(notification.id)}
+              onClick={() => {handleNotificationClick(notification)}}
               sx={{
                 py: 2,
                 px: 3,
@@ -217,6 +198,8 @@ console.log("seller id ",sid)
                 '&:hover': {
                   backgroundColor: notification.read ? 'action.hover' : 'action.selected',
                 },
+                display:'flex'
+                ,flexDirection:'row',justifyContent:'space-between'
               }}
             >
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, width: '100%' }}>
@@ -230,6 +213,7 @@ console.log("seller id ",sid)
                     />
                   )}
                   <Typography variant="body2">{notification.sub}</Typography>
+
                 </Box>
                 <Typography
                   variant="caption"
@@ -237,7 +221,10 @@ console.log("seller id ",sid)
                 >
                   {timeAgo(notification.date)}
                 </Typography>
+
               </Box>
+              <Avatar src={`${notification.profilePicture}`} />
+
             </MenuItem>
           ))
         ) : (
@@ -293,7 +280,7 @@ console.log("seller id ",sid)
 
                 {/* Timestamp */}
                 <Typography variant="caption" color="text.secondary" sx={{ mt: 2 }}>
-                  Sent {timeAgo(selectedNotification.time)}
+                  Sent {timeAgo(selectedNotification.date)}
                 </Typography>
               </Box>
             </DialogContent>

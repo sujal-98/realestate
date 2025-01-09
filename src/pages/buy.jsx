@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState ,useEffect,useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Container, Typography, Grid, Box, Card, CardContent, CardActions, Button, Avatar, CircularProgress, Pagination } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart, faEye } from '@fortawesome/free-solid-svg-icons';
@@ -15,7 +16,7 @@ const SkyBackground = styled(Box)(({ theme }) => ({
   backgroundAttachment: 'fixed',
   backgroundPosition: 'center',
   minHeight: '100vh',
-  color: '#000', // Black text color
+  color: '#000',
   position: 'relative',
   overflow: 'hidden',
   '&::before': {
@@ -46,14 +47,17 @@ const SkyBackground = styled(Box)(({ theme }) => ({
   },
 }));
 
-const Buy = ({ props }) => {
+const Rent = ({props}) => {
   const id = props;
+
   const dispatch = useDispatch();
+  const Navigate=useNavigate();
 
   useEffect(() => {
     dispatch(fetchProp('selling'));
-    dispatch(fetchSave(id));
-  }, [dispatch, id]);
+      dispatch(fetchSave(id));
+  }, [dispatch,id]);
+
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
@@ -62,8 +66,9 @@ const Buy = ({ props }) => {
   const properties = useSelector((state) => state.buy.prop);
   const loading = useSelector((state) => state.buy.loading);
   const error = useSelector((state) => state.buy.error);
+  
 
-  const handleSave = useCallback((propertyId) => {
+ const handleSave = useCallback((propertyId) => {
     if (savedProperties.has(propertyId)) {
       dispatch(removeProperty(id, propertyId));
     } else {
@@ -77,135 +82,137 @@ const Buy = ({ props }) => {
   const currentProperties = properties.slice(indexOfFirstProperty, indexOfLastProperty);
   const totalPages = Math.ceil(properties.length / itemsPerPage);
 
+  const handleClick=(info)=>{
+    Navigate('/profile/listing',{state: { info: info, userid: id } })
+  }
+
   return (
     <SkyBackground>
       <Lbar />
-      <Container maxWidth="lg" sx={{ mt: 4, mb: 4, pt: 4, pb: 4, borderRadius: 2, backgroundColor: 'rgba(255, 255, 255, 0.8)' }}>
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+      <Container maxWidth="lg" sx={{ mt: 4, mb: 4, bgcolor: '#f5f5f5', pt: 4, pb: 4, borderRadius: 2 }}>
+        <Typography
+          variant="h4"
+          gutterBottom
+          align="center"
+          sx={{
+            mb: 4,
+            fontWeight: 'bold',
+            fontSize: '2.5rem',
+            textTransform: 'uppercase',
+            letterSpacing: 1.5,
+            color: '#000',
+            textShadow: '1px 1px 2px rgba(255, 255, 255, 0.6)',
+          }}
         >
-          <Typography
-            variant="h4"
-            gutterBottom
-            align="center"
-            sx={{
-              mb: 4,
-              fontWeight: 'bold',
-              fontSize: '2.5rem',
-              textTransform: 'uppercase',
-              letterSpacing: 1.5,
-              color: '#000', // Black text color
-              textShadow: '1px 1px 2px rgba(255, 255, 255, 0.6)', // Optional for better readability
-            }}
-          >
-            Buy Properties
-          </Typography>
-        </motion.div>
+          Properties for Rent
+        </Typography>
         {loading ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
             <CircularProgress />
           </Box>
         ) : error ? (
           <Typography variant="h6" color="error" align="center">
-            {error} <Button onClick={() => dispatch(fetchProp('selling'))}>Retry</Button>
+            {error}
           </Typography>
         ) : (
-          <>
-            <Grid container spacing={4}>
-              {currentProperties.map((property) => (
-                <Grid item xs={12} sm={6} md={4} key={property._id}>
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.3 }}
+          <Grid container spacing={4}>j
+            {currentProperties.map((property) => (
+              <Grid item xs={12} sm={6} md={4} key={property._id}>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <Card
+                    sx={{
+                      height: '100%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      transition: 'transform 0.3s, box-shadow 0.3s',
+                      borderRadius: 3,
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
+                      '&:hover': {
+                        transform: 'scale(1.05)',
+                        boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)',
+                      },
+                      zIndex:30
+                    }}
+                 
                   >
-                    <Card
-                      sx={{
-                        height: '100%',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        transition: 'transform 0.3s, box-shadow 0.3s',
-                        borderRadius: 3,
-                        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
-                        '&:hover': {
-                          transform: 'scale(1.03)',
-                          boxShadow: '0 12px 24px rgba(0, 0, 0, 0.2)',
-                        },
-                      }}
-                    >
-                      <Box sx={{ position: 'relative' }}>
-                        <img
-                          src={property.propertyImages[0] || '/images/fallback-image.jpg'}
-                          alt={property.description}
-                          style={{ width: '100%', height: 200, objectFit: 'cover', borderTopLeftRadius: 3, borderTopRightRadius: 3 }}
-                        />
-                        <CardContent sx={{ flexGrow: 1, p: 3 }}>
-                          <Typography variant="h6" component="div" gutterBottom sx={{ fontWeight: 'bold', fontSize: '1.1rem', color: '#000' }}>
-                            {property.location}
-                          </Typography>
-                          <Typography variant="body2" sx={{ mb: 2, fontSize: '0.9rem', color: '#333' }}>
-                            {property.description}
-                          </Typography>
-                          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                              <FontAwesomeIcon icon={faEye} style={{ color: '#333' }} />
-                              <Typography variant="body2">
-                                {property.impressions}
-                              </Typography>
-                            </Box>
-                            <Button
-                              variant="contained"
-                              color={savedProperties.has(property._id) ? 'error' : 'primary'}
-                              startIcon={<FontAwesomeIcon icon={faHeart} />}
-                              size="small"
-                              onClick={() => handleSave(property._id)}
-                              sx={{
-                                fontSize: '0.8rem',
-                                fontWeight: 'bold',
-                                px: 2,
-                              }}
-                            >
-                              {savedProperties.has(property._id) ? 'Saved' : 'Save'}
-                            </Button>
+                    <Box sx={{ position: 'relative' }}>
+                      <img
+                        src={property.propertyImages[0]}
+                        alt={property.description}
+                        style={{ width: '100%', height: 200, objectFit: 'cover', borderTopLeftRadius: 3, borderTopRightRadius: 3 }}
+                      />
+                      <CardContent sx={{ flexGrow: 1, p: 2 }}    >
+                        <Typography variant="h6" component="div" gutterBottom sx={{ fontWeight: 'bold', fontSize: '1.1rem', color: '#000' }}>
+                          {property.title}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                          {property.description}
+                        </Typography>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }} onClick={()=>{handleClick(property)}} >
+                            <FontAwesomeIcon icon={faEye} style={{ color: '#555' }} />
+                            <Typography variant="body2" color="text.secondary">
+                              {property.impressions}
+                            </Typography>
                           </Box>
-                          <CardActions sx={{ mt: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                              <Avatar
-                                src={property.sellerId.userId.profilePicture?.data || '/images/default-avatar.png'}
-                                alt={property.sellerId.userId.username}
-                                sx={{ width: 32, height: 32 }}
-                              />
-                              <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                                {property.sellerId.userId.username}
-                              </Typography>
-                            </Box>
-                            <Button variant="contained" color="success" size="small" sx={{ fontSize: '0.8rem' }}>
+                             <Button
+                                                      variant="contained"
+                                                      color={savedProperties.has(property._id) ? 'error' : 'primary'}
+                                                      startIcon={<FontAwesomeIcon icon={faHeart} />}
+                                                      size="small"
+                                                      onClick={() => handleSave(property._id)}
+                                                      sx={{
+                                                        fontSize: '0.8rem',
+                                                        fontWeight: 'bold',
+                                                        px: 2,
+                                                      }}
+                                                    >
+                                                      {savedProperties.has(property._id) ? 'Saved' : 'Save'}
+                                                    </Button>
+                        </Box>
+                        <CardActions sx={{ position: 'relative', bottom: 0, left: 0, right: 0, pb: 2 }}>
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1 }}>
+                            <Avatar
+                              src={property.sellerId.userId.profilePicture?.data || '/images/default-avatar.png'}
+                              alt={property.sellerId.userId.username}
+                              sx={{ width: 28, height: 28 }}
+                            />
+                            <Typography variant="body2" color="text.secondary">
+                              {property.sellerId.userId.username}
+                            </Typography>
+                          </Box>
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
+                            <Button variant="contained" color="success" size="small">
                               Contact Now
                             </Button>
-                          </CardActions>
-                        </CardContent>
-                      </Box>
-                    </Card>
-                  </motion.div>
-                </Grid>
-              ))}
-            </Grid>
-            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-              <Pagination
-                count={totalPages}
-                page={currentPage}
-                onChange={(event, value) => setCurrentPage(value)}
-                color="primary"
-                sx={{ '& .MuiPaginationItem-root': { fontSize: '0.9rem', color: '#000' } }}
-              />
-            </Box>
-          </>
+                          </Box>
+                        </CardActions>
+                      </CardContent>
+                    </Box>
+                  </Card>
+                 
+                </motion.div>
+              </Grid>
+            ))}
+       
+          </Grid>
         )}
+              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+                                <Pagination
+                                  count={totalPages}
+                                  page={currentPage}
+                                  onChange={(event, value) => setCurrentPage(value)}
+                                  color="primary"
+                                  sx={{ '& .MuiPaginationItem-root': { fontSize: '0.9rem', color: '#000' } }}
+                                />
+                              </Box>
       </Container>
     </SkyBackground>
   );
 };
 
-export default Buy;
+export default Rent;

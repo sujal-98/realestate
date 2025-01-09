@@ -1,4 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect,useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import { Container, Typography, Grid, Box, Card, CardContent, CardActions, Button, Avatar, CircularProgress } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart, faEye } from '@fortawesome/free-solid-svg-icons';
@@ -49,22 +51,30 @@ const SkyBackground = styled(Box)(({ theme }) => ({
 const SavedProp = ({ props }) => {
   const id = props;
   const dispatch = useDispatch();
+  const Navigate=useNavigate();
 
   useEffect(() => {
     dispatch(fetchSaveFull(id));
   }, [dispatch, id]);
 
-  const savedProperties = useSelector((state) => state.fullSaved.prop);
+  const saved = useSelector((state) => state.fullSaved.prop);
+  const savedProperties = useSelector((state) =>new Set( state.fullSaved.prop));
   const loading = useSelector((state) => state.fullSaved.loading);
   const error = useSelector((state) => state.fullSaved.error);
 
-  const handleSave = (propertyId) => {
-    if (savedProperties.some((property) => property._id === propertyId)) {
-      dispatch(removeProperty(id, propertyId));
+
+  const handleClick=(info)=>{
+    Navigate('/profile/listing',{state: { info: info, userid: id } })
+  }
+  
+ const handleSave = useCallback((property) => {
+    if (savedProperties.has(property)) {
+      dispatch(removeProperty(id, property._id));
     } else {
-      dispatch(addProperty(id, propertyId));
+      dispatch(addProperty(id, property._id));
     }
-  };
+  }, [dispatch, id,saved ,savedProperties]);
+
 
   return (
     <SkyBackground>
@@ -96,7 +106,7 @@ const SavedProp = ({ props }) => {
           </Typography>
         ) : (
           <Grid container spacing={4}>
-            {savedProperties.map((property) => (
+            {saved.map((property) => (
               <Grid item xs={12} sm={6} md={4} key={property._id}>
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
@@ -123,9 +133,9 @@ const SavedProp = ({ props }) => {
                         alt={property.description}
                         style={{ width: '100%', height: 200, objectFit: 'cover', borderTopLeftRadius: 3, borderTopRightRadius: 3 }}
                       />
-                      <CardContent sx={{ flexGrow: 1, p: 2 }}>
+                      <CardContent sx={{ flexGrow: 1, p: 2 }} onClick={handleClick}>
                         <Typography variant="h6" component="div" gutterBottom sx={{ fontWeight: 'bold', fontSize: '1.1rem', color: '#000' }}>
-                          {property.location}
+                          {property.location.city}
                         </Typography>
                         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                           {property.description}
@@ -137,15 +147,20 @@ const SavedProp = ({ props }) => {
                               {property.impressions}
                             </Typography>
                           </Box>
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            startIcon={<FontAwesomeIcon icon={faHeart} />}
-                            size="small"
-                            onClick={() => handleSave(property._id)}
-                          >
-                            {savedProperties.some((p) => p._id === property._id) ? 'Unsave' : 'Save'}
-                          </Button>
+                         <Button
+                                                                              variant="contained"
+                                                                              color={savedProperties.has(property) ? 'error' : 'primary'}
+                                                                              startIcon={<FontAwesomeIcon icon={faHeart} />}
+                                                                              size="small"
+                                                                              onClick={() => handleSave(property)}
+                                                                              sx={{
+                                                                                fontSize: '0.8rem',
+                                                                                fontWeight: 'bold',
+                                                                                px: 2,
+                                                                              }}
+                                                                            >
+                                                                              {savedProperties.has(property) ? 'Saved' : 'Save'}
+                                                                            </Button>
                         </Box>
                         <CardActions sx={{ position: 'relative', bottom: 0, left: 0, right: 0, pb: 2 }}>
                           <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1 }}>

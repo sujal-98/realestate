@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { DollarSign } from 'lucide-react';
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
+import { Avatar } from '@mui/material';
 import L from 'leaflet';
 import Lbar from '../comp/loggesNavbar/Lbar';
 import 'leaflet/dist/leaflet.css';
@@ -18,29 +19,31 @@ import Divider from '@mui/material/Divider';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import axios from 'axios';
+import {  useSelector } from 'react-redux';
 
-const Listing = ({prop}) => {
+const Listing = () => {
   const [activeImage, setActiveImage] = useState(0);
   const[seller,setSeller]=useState({})
   const location = useLocation();
-  const data = location.state;
+  const { info, userid } = location.state
 
 
   useEffect(() => {
     const fetch = async () => {
-      console.log("id ", data.sellerId._id); // Log the ID to confirm it's being passed correctly
+      console.log(userid)
+      console.log("id ", info.sellerId._id); // Log the ID to confirm it's being passed correctly
 
       try {
-        const response = await axios.get(`http://localhost:3000/sellerById/${data.sellerId._id}`);
-        console.log("response ", response.data); // Log the response from API
-        setSeller(response.data); // Set the state with the seller data
+        const response = await axios.get(`http://localhost:3000/sellerById/${info.sellerId._id}`);
+        console.log("response ", response.info); // Log the response from API
+        setSeller(response.info); // Set the state with the seller info
       } catch (error) {
-        console.error("Error fetching seller data:", error); // Log any errors
+        console.error("Error fetching seller info:", error); // Log any errors
       }
     };
 
     fetch();
-  }, [data.sellerId._id]);
+  }, [info.sellerId._id]);
 
   const property = {
     title: "Modern Luxury Villa",
@@ -81,7 +84,7 @@ const Listing = ({prop}) => {
     });
     const [open, setOpen] = useState(false);
     const [activeTab, setActiveTab] = useState(0);
-    const [formData, setFormData] = useState({
+    const [forminfo, setForminfo] = useState({
       subject: '',
       message: ''
     });
@@ -97,7 +100,7 @@ const Listing = ({prop}) => {
     const handleClose = () => {
       setOpen(false);
       setActiveTab(0);
-      setFormData({
+      setForminfo({
         subject: '',
         message: ''
       });
@@ -105,7 +108,7 @@ const Listing = ({prop}) => {
   
     const handleChange = (e) => {
       const { name, value } = e.target;
-      setFormData(prevState => ({
+      setForminfo(prevState => ({
         ...prevState,
         [name]: value
       }));
@@ -113,20 +116,20 @@ const Listing = ({prop}) => {
   
     const handleSubmit = async (e) => {
       e.preventDefault();
-      console.log('Form submitted:', formData);
+      console.log('Form submitted:', forminfo);
       handleClose();
       const form={
-        subject:formData.subject,
-        message:formData.message,
-        senderId:seller.userId._id,
-        recieverId:data.sellerId._id,
+        subject:forminfo.subject,
+        message:forminfo.message,
+        senderId:userid,
+        recieverId:info.sellerId._id,
         }
       console.log("form ",form)
       try{
         const response=await axios.post(`http://localhost:3000/addNotification`,form)
         if(response){
-          console.log(response.data)
-          alert(response.data.message)
+          console.log(response)
+          alert("Message sent")
         }
         else{
           alert("failed")
@@ -149,12 +152,12 @@ const Listing = ({prop}) => {
         {/* Image Gallery */}
         <div className="space-y-4">
           <img
-            src={data.propertyImages[activeImage]}
+            src={info.propertyImages[activeImage]}
             alt={`Property view ${activeImage + 1}`}
             className="w-full h-[400px] object-cover rounded-lg shadow-lg"
           />
           <div className="flex gap-4 overflow-x-auto pb-2">
-            {data.propertyImages.map((img, idx) => (
+            {info.propertyImages.map((img, idx) => (
               <img
                 key={idx}
                 src={img}
@@ -171,7 +174,7 @@ const Listing = ({prop}) => {
         <div className="space-y-4">
           <div className="bg-gray-100 h-[400px] rounded-lg flex items-center justify-center relative overflow-hidden">
             <MapContainer
-                               center={[data.location.latitude,data.location.longitude]}
+                               center={[info.location.latitude,info.location.longitude]}
                                 zoom={13}
                                 style={{ height: "100%", width: "100%" }}
                               >
@@ -179,7 +182,7 @@ const Listing = ({prop}) => {
                                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                                   attribution="&copy; OpenStreetMap contributors"
                                 />
-        <Marker position={[data.location.latitude, data.location.longitude]}  icon={customIcon} />
+        <Marker position={[info.location.latitude, info.location.longitude]}  icon={customIcon} />
                                 </MapContainer>
             <div className="absolute inset-0 bg-black/5" />
             
@@ -188,9 +191,9 @@ const Listing = ({prop}) => {
   className="absolute bg-white px-4 py-2 rounded-lg shadow-lg z-10 "
   style={{ right: '20rem', bottom: '8.6rem' }}
 >
-  <p className="font-semibold">{data.location.address}</p>
+  <p className="font-semibold">{info.location.address}</p>
   <p className="text-sm text-gray-600 truncate">
-    {"LAT: " + data.location.latitude} {"  -  "}{"LONG: " + data.location.longitude}
+    {"LAT: " + info.location.latitude} {"  -  "}{"LONG: " + info.location.longitude}
   </p>
 </div>
           
@@ -203,63 +206,67 @@ const Listing = ({prop}) => {
         {/* Main Details */}
         <div className="lg:col-span-2 space-y-6">
           <div>
-            <h1 className="text-3xl font-bold mb-2">{data.title}</h1>
-            <p className="text-xl text-gray-600">{data.location.city}</p>
+            <h1 className="text-3xl font-bold mb-2">{info.title}</h1>
+            <p className="text-xl text-gray-600">{info.location.city}</p>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 p-6 bg-gray-50 rounded-lg">
             <div>
               <p className="text-gray-600">Bedrooms</p>
-              <p className="text-lg font-semibold">{data.amenities.bedrooms}</p>
+              <p className="text-lg font-semibold">{info.amenities.bedrooms}</p>
             </div>
             <div>
               <p className="text-gray-600">Bathrooms</p>
-              <p className="text-lg font-semibold">{data.amenities.bathrooms}</p>
+              <p className="text-lg font-semibold">{info.amenities.bathrooms}</p>
             </div>
             <div>
               <p className="text-gray-600">Area</p>
-              <p className="text-lg font-semibold">{data.amenities.area}</p>
+              <p className="text-lg font-semibold">{info.amenities.area}</p>
             </div>
             <div>
               <p className="text-gray-600">Year Built</p>
-              <p className="text-lg font-semibold">{data.yearBuilt}</p>
+              <p className="text-lg font-semibold">{info.yearBuilt}</p>
             </div>
             <div>
               <p className="text-gray-600">Parking</p>
-              <p className="text-lg font-semibold">{data.amenities.parking}</p>
+              <p className="text-lg font-semibold">{info.amenities.parking}</p>
             </div>
             <div>
               <p className="text-gray-600">Type</p>
-              <p className="text-lg font-semibold">{data.type}</p>
+              <p className="text-lg font-semibold">{info.type}</p>
             </div>
           </div>
 
           <div>
             <h2 className="text-2xl font-semibold mb-4">Description</h2>
-            <p className="text-gray-700 leading-relaxed">{data.description}</p>
+            <p className="text-gray-700 leading-relaxed">{info.description}</p>
           </div>
         </div>
 
         {/* Seller Card */}
         <div className="bg-white p-6 rounded-lg shadow-lg h-fit border">
+       
+        <div className="text-3xl font-bold text-blue-600 mb-6 flex items-center">
+  <DollarSign className="mr-2" /> 
+  {info.price}
+</div>
           
-          <div className="text-3xl font-bold text-blue-600 mb-6">    {data.price}</div>
-          
-          <div className="flex items-center gap-4 mb-6">
-            {/* <img
-              src={property.seller.image}
-              alt={seller.userId.username}
-              className="w-16 h-16 rounded-full"
-            /> */}
+          <div className="flex items-center gap-4 mb-3 justify-between">
             <div>
-              <h3 className="font-semibold">{property.seller.name}</h3>
+              <h3 className="text-2xl font-semibold mb-2">{info.sellerId.userId.username}</h3>
               <div className="text-sm text-gray-600">
-                ⭐ {property.seller.rating} · {property.seller.listings} listings
+                ⭐ {property.seller.rating} · {info.sellerId.properties.length} listings
               </div>
               <div className="text-sm text-gray-600">
                 {property.seller.experience} experience
               </div>
             </div>
+            <Avatar src={`${info.sellerId.userId.profilePicture}`} sx={{
+              "width": '4rem',
+              "height": '4rem',
+              "cursor":"pointer"
+            }} />
+
           </div>
 
           <button className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors mb-3">
@@ -309,7 +316,7 @@ const Listing = ({prop}) => {
                 <TextField
                   name="subject"
                   label="Subject"
-                  value={formData.subject}
+                  value={forminfo.subject}
                   onChange={handleChange}
                   fullWidth
                   required
@@ -318,7 +325,7 @@ const Listing = ({prop}) => {
                 <TextField
                   name="message"
                   label="Message"
-                  value={formData.message}
+                  value={forminfo.message}
                   onChange={handleChange}
                   fullWidth
                   required

@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useState ,useEffect,useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container, Typography, Grid, Box, Card, CardContent, CardActions, Button, Avatar, CircularProgress } from '@mui/material';
+import { Container, Typography, Grid, Box, Card, CardContent, CardActions, Button, Avatar, CircularProgress, Pagination } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart, faEye } from '@fortawesome/free-solid-svg-icons';
 import Lbar from '../comp/loggesNavbar/Lbar';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchRentProp } from '../actions/action';
+import { fetchRentProp, fetchSave, addProperty, removeProperty } from '../actions/action';
 import { motion } from 'framer-motion';
 import { styled } from '@mui/material/styles';
 
@@ -47,21 +47,46 @@ const SkyBackground = styled(Box)(({ theme }) => ({
   },
 }));
 
-const Rent = () => {
+const Rent = ({props}) => {
+  const id = props;
+
   const dispatch = useDispatch();
   const Navigate=useNavigate();
 
   useEffect(() => {
     dispatch(fetchRentProp('rental'));
-  }, [dispatch]);
+      dispatch(fetchSave(id));
+  }, [dispatch,id]);
 
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
+
+  const savedProperties = useSelector((state) => new Set(state.saved.prop));
   const properties = useSelector((state) => state.buy.prop);
   const loading = useSelector((state) => state.buy.loading);
   const error = useSelector((state) => state.buy.error);
+  
+
+ const handleSave = useCallback((propertyId) => {
+    if (savedProperties.has(propertyId)) {
+      dispatch(removeProperty(id, propertyId));
+    } else {
+      dispatch(addProperty(id, propertyId));
+    }
+  }, [dispatch, id, savedProperties]);
+
+  // Pagination Logic
+  const indexOfLastProperty = currentPage * itemsPerPage;
+  const indexOfFirstProperty = indexOfLastProperty - itemsPerPage;
+  const currentProperties = properties.slice(indexOfFirstProperty, indexOfLastProperty);
+  const totalPages = Math.ceil(properties.length / itemsPerPage);
+
 
   const handleClick=(info)=>{
-    Navigate('/profile/listing',{state:info})
+    Navigate('/profile/listing',{state: { info: info, userid: id } })
   }
+
 
   return (
     <SkyBackground>
@@ -93,7 +118,7 @@ const Rent = () => {
           </Typography>
         ) : (
           <Grid container spacing={4}>j
-            {properties.map((property) => (
+            {currentProperties.map((property) => (
               <Grid item xs={12} sm={6} md={4} key={property._id}>
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
@@ -114,15 +139,16 @@ const Rent = () => {
                       },
                       zIndex:30
                     }}
-                    onClick={()=>{handleClick(property)}}
+                    
                   >
                     <Box sx={{ position: 'relative' }}>
                       <img
                         src={property.propertyImages[0]}
                         alt={property.description}
+                        onClick={()=>{handleClick(property)}}
                         style={{ width: '100%', height: 200, objectFit: 'cover', borderTopLeftRadius: 3, borderTopRightRadius: 3 }}
                       />
-                      <CardContent sx={{ flexGrow: 1, p: 2 }}>
+                      <CardContent sx={{ flexGrow: 1, p: 2 }}    >
                         <Typography variant="h6" component="div" gutterBottom sx={{ fontWeight: 'bold', fontSize: '1.1rem', color: '#000' }}>
                           {property.title}
                         </Typography>
@@ -130,15 +156,26 @@ const Rent = () => {
                           {property.description}
                         </Typography>
                         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}  >
                             <FontAwesomeIcon icon={faEye} style={{ color: '#555' }} />
                             <Typography variant="body2" color="text.secondary">
                               {property.impressions}
                             </Typography>
                           </Box>
-                          <Button variant="contained" color="primary" startIcon={<FontAwesomeIcon icon={faHeart} />} size="small">
-                            Save
-                          </Button>
+                             <Button
+                                                      variant="contained"
+                                                      color={savedProperties.has(property._id) ? 'error' : 'primary'}
+                                                      startIcon={<FontAwesomeIcon icon={faHeart} />}
+                                                      size="small"
+                                                      onClick={() => handleSave(property._id)}
+                                                      sx={{
+                                                        fontSize: '0.8rem',
+                                                        fontWeight: 'bold',
+                                                        px: 2,
+                                                      }}
+                                                    >
+                                                      {savedProperties.has(property._id) ? 'Saved' : 'Save'}
+                                                    </Button>
                         </Box>
                         <CardActions sx={{ position: 'relative', bottom: 0, left: 0, right: 0, pb: 2 }}>
                           <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1 }}>
@@ -160,11 +197,22 @@ const Rent = () => {
                       </CardContent>
                     </Box>
                   </Card>
+                 
                 </motion.div>
               </Grid>
             ))}
+       
           </Grid>
         )}
+              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+                                <Pagination
+                                  count={totalPages}
+                                  page={currentPage}
+                                  onChange={(event, value) => setCurrentPage(value)}
+                                  color="primary"
+                                  sx={{ '& .MuiPaginationItem-root': { fontSize: '0.9rem', color: '#000' } }}
+                                />
+                              </Box>
       </Container>
     </SkyBackground>
   );
