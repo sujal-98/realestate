@@ -34,7 +34,7 @@ const Listing = () => {
       console.log("id ", info.sellerId._id); // Log the ID to confirm it's being passed correctly
 
       try {
-        const response = await axios.get(`http://localhost:3000/sellerById/${info.sellerId._id}`);
+        const response = await axios.get(`http://localhost:3000/sellerById/${info.sellerId._id}`, { withCredentials: true });
         console.log("response ", response.info); // Log the response from API
         setSeller(response.info); // Set the state with the seller info
       } catch (error) {
@@ -126,7 +126,7 @@ const Listing = () => {
         }
       console.log("form ",form)
       try{
-        const response=await axios.post(`http://localhost:3000/addNotification`,form)
+        const response=await axios.post(`http://localhost:3000/addNotification`,form, { withCredentials: true })
         if(response){
           console.log(response)
           alert("Message sent")

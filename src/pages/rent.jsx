@@ -54,6 +54,7 @@ const Rent = ({props}) => {
   const Navigate=useNavigate();
 
   useEffect(() => {
+    console.log("renta;")
     dispatch(fetchRentProp('rental'));
       dispatch(fetchSave(id));
   }, [dispatch,id]);
@@ -66,7 +67,8 @@ const Rent = ({props}) => {
   const properties = useSelector((state) => state.buy.prop);
   const loading = useSelector((state) => state.buy.loading);
   const error = useSelector((state) => state.buy.error);
-  
+  console.log("prop" ,savedProperties)
+
 
  const handleSave = useCallback((propertyId) => {
     if (savedProperties.has(propertyId)) {
@@ -117,7 +119,7 @@ const Rent = ({props}) => {
             {error}
           </Typography>
         ) : (
-          <Grid container spacing={4}>j
+          <Grid container spacing={3}>
             {currentProperties.map((property) => (
               <Grid item xs={12} sm={6} md={4} key={property._id}>
                 <motion.div
@@ -188,7 +190,7 @@ const Rent = ({props}) => {
                               {property.sellerId.userId.username}
                             </Typography>
                           </Box>
-                          <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2,ml:4 }}>
                             <Button variant="contained" color="success" size="small">
                               Contact Now
                             </Button>

@@ -73,6 +73,7 @@ const UploadForSellForm = ({ id, onSubmit }) => {
 
 
   const initialValues = {
+    type:'selling',
     propertyType: '',
     title:'',
     price: '',
@@ -147,7 +148,8 @@ formData.append('location[address]', values.address);
       const response = await axios.post(`http://localhost:3000/upload/${id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
-        }
+        }      ,    withCredentials: true, 
+
       });
       console.log('Property uploaded successfully', response.data);
       alert("Property uploaded");

@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
-import { Navigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 
 const Login = ({ onChildClick }) => {
+  const navigate=useNavigate()
   const [redirect, setRedirect] = useState(false);
   const [userId, setUserId] = useState("");
   const validationSchema = Yup.object().shape({
@@ -42,7 +43,7 @@ const Login = ({ onChildClick }) => {
   }
 
   const navigateHome = () => {
-    return <Navigate to="/" />;
+    return navigate('/');
   };
   return (
     <div className='shadow-transparent rounded-3xl w-full h-full flex flex-row-reverse'>
@@ -50,10 +51,10 @@ const Login = ({ onChildClick }) => {
         <img src="./images/login.jpg" alt="PHOTO" className='w-full  object-cover' style={{ height: '840px', width: '1000px' }} />
       </div>
       <button
-        onClick={navigateHome}
+       
         className="absolute top-0 left-0 m-4 text-gray-500 hover:text-gray-700 focus:outline-none"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"  onClick={navigateHome}>
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
         </svg>
       </button>
@@ -85,20 +86,22 @@ const Login = ({ onChildClick }) => {
           />
           {formik.errors.password && formik.touched.password && <p className="text-red-500 text-xs italic">{formik.errors.password}</p>}
         </div>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-col">
           <div className="text-base">
             <a className="text-blue-500 hover:text-blue-700" href="#">Forgot Password?</a>
           </div>
-        </div>
+       
         <button
           className="bg-blue-500 hover:bg-blue-700 w-full text-white mt-4 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           type="submit"
         >
           Log In
         </button>
-        <div className='border-t border-black mt-4 text-base pt-3'>
-          Don't have an Account? <a className='p-2 hover:text-blue-400'>SignUp</a>
-        </div>
+        <div className='border-t border-black mt-4 text-base pt-3' style={{width:'15rem'}}>
+          Don't have an Account? <a className='p-2 text-blue-600 hover:text-blue-400' onClick={()=>{
+            navigate('/register')
+          }} >SignUp</a>
+        </div> </div>
       </form>
     </div>
   );

@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useState} from 'react';
 import MenuIcon from '@mui/icons-material/Menu';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -24,6 +24,8 @@ import NotificationDropdown from './NotificationDropdown';
 
 const Lbar = ({ id }) => {
   const navigate = useNavigate();
+  const [searchValue, setSearchValue] = useState('');
+
   const user = useSelector((state) => state.account.user);
 
   const [open, setOpen] = React.useState(false);
@@ -54,15 +56,27 @@ const Lbar = ({ id }) => {
 
   const handleSave = () => {
     navigate(`/profile/save/${id}`);
+
+  };
+
+  const handleSearch = () => {
+    if (searchValue.trim()) {
+      navigate('/search', { state: { query: searchValue.trim() }  });
+    }
   };
 
   const logout = (name) => {
     if (document.cookie.split(';').some(item => item.trim().startsWith(name + '='))) {
       document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     }
-    window.location.reload();
+    navigate('/')
   };
-
+  const handleKeyDown = (event) => {
+    console.log("I was called")
+    if (event.key === 'Enter') {
+      navigate('/search', { state: { query: searchValue } });
+    }
+  };
   const DrawerList = (
     <Box
       sx={{
@@ -143,13 +157,17 @@ const Lbar = ({ id }) => {
       >
         <div className="text-white font-bold text-2xl">Om Life Space</div>
         
-        <div className="flex-grow mx-4">
-          <input
-            type="text"
-            placeholder="Search"
-            className="w-3/4 py-2 px-4 rounded-md bg-gray-100 text-black placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
-        </div>
+        <div className="flex-grow mx-4 flex">
+  <input
+    type="text"
+    placeholder="Search by location"
+    value={searchValue}
+    onChange={(e) => setSearchValue(e.target.value)}
+    onKeyDown={handleKeyDown}
+    className="w-3/4 py-2 px-4 rounded-l-md bg-gray-100 text-black placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+  />
+
+</div>
         
         <div className="flex items-center gap-2">
           <Toolbar>
@@ -166,7 +184,7 @@ const Lbar = ({ id }) => {
           <Button
             variant="contained"
             color="info"
-            onClick={() => navigate('/')}
+            onClick={() => navigate(`/profile/${id}`)}
             sx={{ borderRadius: '8px', padding: '8px 16px', textTransform: 'none' }}
           >
             Home

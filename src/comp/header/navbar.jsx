@@ -5,10 +5,16 @@ import { Search } from 'lucide-react';
 const Navbar = () => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
 
   const handleRegister = () => navigate('/register');
   const handleLogin = () => navigate('/login');
-
+  const handleKeyDown = (event) => {
+    console.log("I was called")
+    if (event.key === 'Enter') {
+      navigate('/search', { state: { query: searchValue ,key: searchValue.trim() }});
+    }
+  };
   return (
     <nav className="bg-slate-600/30 p-4 relative z-10">
       <div className="container mx-auto">
@@ -40,6 +46,9 @@ const Navbar = () => {
                          text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 
                          focus:ring-blue-500"
                 placeholder="Search..."
+                value={searchValue}
+    onChange={(e) => setSearchValue(e.target.value)}
+    onKeyDown={handleKeyDown}
               />
             </div>
 

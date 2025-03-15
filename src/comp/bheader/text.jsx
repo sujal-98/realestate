@@ -1,40 +1,35 @@
-import React, { useEffect } from 'react';
+import React from 'react';
+import { ArrowRight } from 'lucide-react';
 
 const Text = () => {
-  useEffect(() => {
-    const elements = document.querySelectorAll('.animate-fade');
-    elements.forEach((el, index) => {
-      el.style.animation = `fadeIn 1s ease-out forwards ${index * 0.5}s`;
-    });
-  }, []);
-
   return (
-    <div className="h-full  relative left-[100px] top-[120px] lg:left-[200px] md:left-[175px] sm:left-[100px]"
-    style={{width: "max-content"}}
-    >
-      <div className="animate-fade text-white text-4xl md:text-5xl lg:text-7xl font-bold mb-3">
-        Find your next <span className="text-yellow-300">perfect</span>
-        <br /> place with ease
+    <div className="w-full max-w-4xl mx-auto px-4 py-16">
+      <div className="space-y-8">
+        <h1 className="font-bold text-white" style={{fontSize:"4rem",width:'60rem'}}>
+          Find your next{' '}
+          <span className="text-yellow-300">
+            perfect
+          </span>
+          <br className="hidden sm:block" /> 
+          place with ease
+        </h1>
+
+        <p className=" text-orange-100 font-semibold" style={{fontSize:"2.8rem"}}>
+          Omlifespace will help you find your home fast, easy and comfortable.
+          <br className="hidden sm:block" /> 
+     
+
+        </p>
+
+        <a 
+          href="#explore"
+          className="inline-flex items-center gap-2 px-6 py-3 text-lg 
+                   text-white bg-blue-500/60 rounded-lg hover:bg-blue-600"
+        >
+          Let's Start
+          <ArrowRight className="w-5 h-5" />
+        </a>
       </div>
-      
-      <div className="animate-fade text-white text-xl md:text-2xl lg:text-3xl mt-3 mb-4">
-        Omlifespace will help you find your home fast, easy and comfortable.
-        <br /> Our expert support is always available.
-      </div>
-      
-      <a href="#" className="animate-fade text-2xl md:text-3xl lg:text-4xl text-blue-300 font-bold hover:underline">
-        Let's Start ...
-      </a>
-      
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(-20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade {
-          opacity: 0;
-        }
-      `}</style>
     </div>
   );
 };

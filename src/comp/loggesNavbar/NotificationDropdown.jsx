@@ -43,7 +43,7 @@ const NotificationDropdown = ({ props }) => {
 
   const fetchSellerId = useCallback(async () => {
     try {
-      const { data } = await axios.get(`http://localhost:3000/account/${props}`);
+      const { data } = await axios.get(`http://localhost:3000/account/${props}`, { withCredentials: true });
       console.log("data ",data)
       setSellerId(data.user.seller);
       console.log(data.user.seller)
@@ -59,7 +59,7 @@ const NotificationDropdown = ({ props }) => {
     if (!sid) return;
     try {
       setLoading(true);
-      const { data } = await axios.get(`http://localhost:3000/getNotifications/${sid}`);
+      const { data } = await axios.get(`http://localhost:3000/getNotifications/${sid}`, { withCredentials: true });
       setNotifications({
         read: data.Read || [],
         unread: data.unRead || []
@@ -119,9 +119,9 @@ console.log("seller id ",sid)
       }));
 
       // Make API call to update server
-      const task=await axios.put(`http://localhost:3000/changeReadStatus/${sellerId}`);
-      console.log(task)
-      handleClose();
+      const task=await axios.put(`http://localhost:3000/changeReadStatus/${sellerId}`, { withCredentials: true });
+      console.log("task ",task)
+      fetchNotifications(sid);
     } catch (err) {
       console.error('Error marking all notifications as read:', err);
       await fetchNotifications(sellerId);
@@ -223,7 +223,7 @@ console.log("seller id ",sid)
                 </Typography>
 
               </Box>
-              <Avatar src={`${notification.profilePicture}`} />
+              <Avatar src={`${notification.senderId.profilePicture}`} />
 
             </MenuItem>
           ))

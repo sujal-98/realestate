@@ -5,6 +5,7 @@ import { AddCircle } from '@mui/icons-material';
 import Lbar from '../comp/loggesNavbar/Lbar';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchUser } from '../actions/action';
+
 import axios from 'axios';
 
 const Account = ({ props }) => {
@@ -68,16 +69,19 @@ const Account = ({ props }) => {
       }
     }
   
-    let hasChanges = false;
+    let hasChanges = true;
     for (let entry of formData.entries()) {
+      console.log("entry",entry)
       hasChanges = true;
     }
-    if (hasChanges) {
+    if (fileChanged) {
       try {
         const update = await axios.put(`http://localhost:3000/update/${props}`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
+          withCredentials: true, 
+        
         });
         console.log('Updated successfully: ', update);
         dispatch(fetchUser(props)); 
@@ -86,9 +90,20 @@ const Account = ({ props }) => {
       } catch (error) {
         console.error(error);
       }
-    } else {
-      console.log("No changes to update.");
+    } 
+    else{
+      try {
+        const update = await axios.put(`http://localhost:3000/update/${props}`, formData,{          withCredentials: true 
+        })
+        console.log('Updated successfully: ', update);
+        dispatch(fetchUser(props)); 
+        setIsChanged(false); 
+        setfileChanged(false);
+      } catch (error) {
+        console.error(error);
+      }
     }
+  
   };
   
   

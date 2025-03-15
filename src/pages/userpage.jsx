@@ -20,8 +20,8 @@ const Userpage = ({props}) => {
   return (
     <div style={{width:"100%"}}>
       <Lbar id={props} />
-      <div  style={{height:"900px",width:"100%"}}>
-        <img src="/images/bg.jpg" alt="background" className="absolute inset-0 w-full object-cover" style={{ zIndex: '-1',height:'900px' }} />
+      <div  style={{height:"690px",width:"100%"}}>
+        <img src="/images/bg.jpg" alt="background" className="absolute inset-0 w-full object-cover" style={{ zIndex: '-1',height:'800px' }} />
         <Text />
       </div>
       <Recently />

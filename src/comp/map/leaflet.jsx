@@ -1,11 +1,11 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
-
+import axios from 'axios';
 import "leaflet/dist/leaflet.css";
 
 const Leaflet = ({ label, items }) => {
-  
+
   const customIcon = new L.Icon({
     iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
     iconSize: [25, 41],
@@ -14,7 +14,8 @@ const Leaflet = ({ label, items }) => {
     shadowSize: [41, 41]
   });
   
-  const selectedItem = items.find(item => item.id === label);
+
+  const selectedItem = items.find(item => item.id === label)
 
 
 

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { rental1 } from '../../resources/property';
 
 const RentalCarousel = () => {
-  // Mock data for preview
   const rental = rental1
   const [currentIndex, setCurrentIndex] = React.useState(0);
   const [favorites, setFavorites] = useState(new Set());

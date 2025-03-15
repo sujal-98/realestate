@@ -1,45 +1,23 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { MapPin, Navigation, Home, Coffee } from 'lucide-react';
+import {locations} from '../../resources/properties'
+import axios from 'axios'
 import Leaflet from './leaflet';
 import Verticle from './verticle'
+import { json } from 'react-router-dom';
 
 const Toggle = () => {
   const [activeButton, setActiveButton] = useState(0);
+  const [count,setCount]=useState(0);
+  const [lookUp,setLookUp]=useState({});
   
-  // Button configurations with icons and gradients
-  const buttonConfigs = [
-    { 
-      label: 'Popular', 
-      icon: <Navigation size={18} />,
-      gradient: 'from-blue-600 to-indigo-600'
-    },
-    { 
-      label: 'Rentals', 
-      icon: <Home size={18} />,
-      gradient: 'from-purple-600 to-pink-600'
-    },
-    { 
-      label: 'Affordable', 
-      icon: <MapPin size={18} />,
-      gradient: 'from-emerald-600 to-teal-600'
-    },
-    { 
-      label: 'LifeStyle', 
-      icon: <Coffee size={18} />,
-      gradient: 'from-orange-600 to-rose-600'
-    }
-  ];
-
-  const [selectedLocation, setSelectedLocation] = useState('');
-
-
   const menuItems = [
     [
-      { id: 1, name: 'Dwarka Mor', latitude: 28.6165, longitude: 77.0369 },
+      { id: 1, name: 'Dwarka', latitude: 28.6165, longitude: 77.0369 },
       { id: 2, name: 'Uttam Nagar', latitude: 28.6204, longitude: 77.0452 },
       { id: 3, name: 'Burari', latitude: 28.7255, longitude: 77.2003 },
       { id: 4, name: 'Paschim Vihar', latitude: 28.6695, longitude: 77.0956 },
-      { id: 5, name: 'Sector 24 Rohini', latitude: 28.7232, longitude: 77.1118 },
+      { id: 5, name: 'Rohini', latitude: 28.7232, longitude: 77.1118 },
       { id: 6, name: 'Pitampura', latitude: 28.7033, longitude: 77.1318 },
       { id: 7, name: 'Vikaspuri', latitude: 28.6384, longitude: 77.0701 },
       { id: 8, name: 'Mahavir Enclave', latitude: 28.6051, longitude: 77.0716 },
@@ -83,6 +61,73 @@ const Toggle = () => {
       { id: 40, name: 'Okhla', latitude: 28.5303, longitude: 77.2689 }
     ]
   ];
+
+
+  useEffect(() => {
+    const computeAndStoreLookUp = async () => {
+      const storedLookUp = localStorage.getItem("lookUp");
+  const updatedLookUp={}
+      // Check if data exists in localStorage
+      if (storedLookUp) {
+        console.log("Data retrieved from localStorage");
+        setLookUp(JSON.parse(storedLookUp)); 
+        return; 
+      }
+   else {
+        console.log("Calculating lookUp...");
+        menuItems.flat().forEach((item) => {
+          for (const key in locations) {
+            if (key.includes(item.name)) {
+              if (updatedLookUp[item.name]) {
+                updatedLookUp[item.name] = [
+                  ...updatedLookUp[item.name],
+                  ...locations[key],
+                ];
+              } else {
+                updatedLookUp[item.name] = locations[key];
+              }
+            }
+          }
+        });
+  
+        setLookUp(updatedLookUp);
+        localStorage.setItem("lookUp", JSON.stringify(updatedLookUp));
+  
+      }
+    };
+  
+    computeAndStoreLookUp();
+  }, []);
+  
+
+  // Button configurations with icons and gradients
+  const buttonConfigs = [
+    { 
+      label: 'Popular', 
+      icon: <Navigation size={18} />,
+      gradient: 'from-blue-600 to-indigo-600'
+    },
+    { 
+      label: 'Rentals', 
+      icon: <Home size={18} />,
+      gradient: 'from-purple-600 to-pink-600'
+    },
+    { 
+      label: 'Affordable', 
+      icon: <MapPin size={18} />,
+      gradient: 'from-emerald-600 to-teal-600'
+    },
+    { 
+      label: 'LifeStyle', 
+      icon: <Coffee size={18} />,
+      gradient: 'from-orange-600 to-rose-600'
+    }
+  ];
+
+  const [selectedLocation, setSelectedLocation] = useState('');
+
+
+  
 
   const LocationList = ({ items, onSelect }) => (
     <div className="w-1/3 pr-4 overflow-y-auto h-[500px]">
@@ -144,15 +189,16 @@ const Toggle = () => {
 
       {/* Content Area */}
       <div className="bg-white rounded-2xl shadow-lg p-6">
-        <div className="flex space-x-6">
+        <div className="flex space-x-6"          
+        >
           <LocationList 
             items={menuItems[activeButton] || []} 
             onSelect={setSelectedLocation}
           />
            {activeButton !== null && (
         <div className="bg-white rounded-lg shadow-md p-4 flex justify-center " style={{width:'100%',height:'90%'}}>
-         
-          <Leaflet label={selectedLocation} items={menuItems[activeButton]} />
+          
+          <Leaflet label={selectedLocation} items={menuItems[activeButton]} map={lookUp}   count={count} />
         </div>
       )}
         </div>
