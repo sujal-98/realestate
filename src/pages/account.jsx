@@ -76,7 +76,7 @@ const Account = ({ props }) => {
     }
     if (fileChanged) {
       try {
-        const update = await axios.put(`http://localhost:3000/update/${props}`, formData, {
+        const update = await axios.put(`https://realestate-backend-i9x8.onrender.com/update/${props}`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
@@ -93,7 +93,7 @@ const Account = ({ props }) => {
     } 
     else{
       try {
-        const update = await axios.put(`http://localhost:3000/update/${props}`, formData,{          withCredentials: true 
+        const update = await axios.put(`https://realestate-backend-i9x8.onrender.com/update/${props}`, formData,{          withCredentials: true 
         })
         console.log('Updated successfully: ', update);
         dispatch(fetchUser(props)); 

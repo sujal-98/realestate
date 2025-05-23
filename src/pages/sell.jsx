@@ -119,7 +119,7 @@ const UploadForSellForm = ({ id, onSubmit }) => {
     }
     // Step 4: Make the API request
     try {
-      const response = await axios.post(`http://localhost:3000/upload/${id}`, formData, {
+      const response = await axios.post(`https://realestate-backend-i9x8.onrender.com/upload/${id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         },

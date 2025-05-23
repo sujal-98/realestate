@@ -31,7 +31,7 @@ const Login = ({ onChildClick }) => {
     try{
     e.preventDefault();
     setIsSubmitting(true)
-    const response=await axios.post('http://localhost:3000/forgot-password',{email},{
+    const response=await axios.post('https://realestate-backend-i9x8.onrender.com/forgot-password',{email},{
       method:"Post",
       header:{
         'Content-Type': 'application/json',
@@ -55,7 +55,7 @@ const Login = ({ onChildClick }) => {
     validationSchema,
     onSubmit: async (values, { setSubmitting }) => {
       try {
-        const response = await axios.post('http://localhost:3000/login', values, {
+        const response = await axios.post('https://realestate-backend-i9x8.onrender.com/login', values, {
           withCredentials: true
         });
         console.log(response)

@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuth = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/check-auth',{
+      const response = await axios.get('https://realestate-backend-i9x8.onrender.com/check-auth',{
         withCredentials:true
       });
       setIsAuthenticated(response.data.authenticated);

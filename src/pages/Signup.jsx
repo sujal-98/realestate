@@ -24,7 +24,7 @@ const Signup = () => {
     validationSchema,
     onSubmit: async (values, { setSubmitting }) => {
       try {
-        const response = await axios.post('http://localhost:3000/register', values);
+        const response = await axios.post('https://realestate-backend-i9x8.onrender.com/register', values);
         setSubmitting(false);
         alert("Signup Successful");
       } catch (error) {

@@ -87,7 +87,7 @@ const Buy = ({props}) => {
   const handleClick=async (info)=>{
 
     try {    
-    const response=await axios.put(`http://localhost:3000/impressions/${info._id}`,{}) 
+    const response=await axios.put(`https://realestate-backend-i9x8.onrender.com/impressions/${info._id}`,{}) 
     if(response.data.success){
     Navigate('/profile/listing',{state: { info: info, userid: id } })}}
       catch(error){

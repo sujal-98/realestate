@@ -43,7 +43,7 @@ const NotificationDropdown = ({ props }) => {
 
   const fetchSellerId = useCallback(async () => {
     try {
-      const { data } = await axios.get(`http://localhost:3000/account/${props}`, { withCredentials: true });
+      const { data } = await axios.get(`https://realestate-backend-i9x8.onrender.com/account/${props}`, { withCredentials: true });
       console.log("data ",data)
       setSellerId(data.user.seller);
       console.log(data.user.seller)
@@ -59,7 +59,7 @@ const NotificationDropdown = ({ props }) => {
     if (!sid) return;
     try {
       setLoading(true);
-      const { data } = await axios.get(`http://localhost:3000/getNotifications/${sid}`, { withCredentials: true });
+      const { data } = await axios.get(`https://realestate-backend-i9x8.onrender.com/getNotifications/${sid}`, { withCredentials: true });
       setNotifications({
         read: data.Read || [],
         unread: data.unRead || []
@@ -119,7 +119,7 @@ console.log("seller id ",sid)
       }));
 
       // Make API call to update server
-      const task=await axios.put(`http://localhost:3000/changeReadStatus/${sellerId}`, { withCredentials: true });
+      const task=await axios.put(`https://realestate-backend-i9x8.onrender.com/changeReadStatus/${sellerId}`, { withCredentials: true });
       console.log("task ",task)
       fetchNotifications(sid);
     } catch (err) {

@@ -44,7 +44,7 @@ const Listing = () => {
   useEffect(() => {
     const fetch = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/sellerById/${info.sellerId._id}`, { withCredentials: true });
+        const response = await axios.get(`https://realestate-backend-i9x8.onrender.com/sellerById/${info.sellerId._id}`, { withCredentials: true });
         setSeller(response.info);
       } catch (error) {
         console.error("Error fetching seller info:", error);
@@ -153,7 +153,7 @@ const Listing = () => {
     };
     
     try {
-      const response = await axios.post(`http://localhost:3000/addNotification`, form, { withCredentials: true });
+      const response = await axios.post(`https://realestate-backend-i9x8.onrender.com/addNotification`, form, { withCredentials: true });
       if (response) {
         handleClose();
         alert("Message sent successfully!");

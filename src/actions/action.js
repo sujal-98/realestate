@@ -23,7 +23,7 @@ export const fetchUserFailure = (error) => {
 export const fetchUser = (userId) => {
   return (dispatch) => {
     dispatch(fetchUserRequest());
-    axios.get(`http://localhost:3000/account/${userId}`, { withCredentials: true })
+    axios.get(`https://realestate-backend-i9x8.onrender.com/account/${userId}`, { withCredentials: true })
       .then(response => {
         const user = response.data.user;
         console.log("action user: ",user)
@@ -39,7 +39,7 @@ export const updateUser = (userId,updatedData) => {
   return (dispatch) => {
     dispatch(fetchUserRequest());
     console.log(updatedData)
-    axios.put(`http://localhost:3000/update/${userId}`,updatedData, {
+    axios.put(`https://realestate-backend-i9x8.onrender.com/update/${userId}`,updatedData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -81,7 +81,7 @@ export const fetchPropertyFailure = (error) => {
 export const fetchProp = (saleType) => {
   return (dispatch) => {
     dispatch(fetchPropertyRequest());
-    axios.get('http://localhost:3000/sale', {
+    axios.get('https://realestate-backend-i9x8.onrender.com/sale', {
       params: { type: 'selling' },           
       withCredentials: true               
     })
@@ -99,7 +99,7 @@ export const fetchProp = (saleType) => {
 export const fetchRentProp = (saleType) => {
   return (dispatch) => {
     dispatch(fetchPropertyRequest());
-    axios.get('http://localhost:3000/rent', {
+    axios.get('https://realestate-backend-i9x8.onrender.com/rent', {
       params: {
         type: 'rental',
       },
@@ -155,7 +155,7 @@ export const remove = (prop) => {
 export const fetchSave = (userId) => async (dispatch) => {
   dispatch(fetchSavedRequest());
   try {
-      const response = await axios.get(`http://localhost:3000/save/getSavedIds/${userId}`, { withCredentials: true });
+      const response = await axios.get(`https://realestate-backend-i9x8.onrender.com/save/getSavedIds/${userId}`, { withCredentials: true });
       dispatch(fetchSavedSuccess(response.data));
   } catch (error) {
       dispatch(fetchSavedFailure(error.message));
@@ -166,7 +166,7 @@ export const fetchSave = (userId) => async (dispatch) => {
 export const fetchSaveFull = (userId) => async (dispatch) => {
   dispatch({ type: 'FETCH_FULLSAVED_REQUEST' });
   try {
-      const response = await axios.get(`http://localhost:3000/save/getSaved/${userId}`, { withCredentials: true });
+      const response = await axios.get(`https://realestate-backend-i9x8.onrender.com/save/getSaved/${userId}`, { withCredentials: true });
       dispatch({ type: 'FETCH_FULLSAVED_SUCCESS', payload: response.data });
   } catch (error) {
       dispatch({ type: 'FETCH_FULLSAVED_FAILURE', payload: error.message });
@@ -176,7 +176,7 @@ export const fetchSaveFull = (userId) => async (dispatch) => {
 // Add Property
 export const addProperty = (userId, propertyId) => async (dispatch) => {
   try {
-      const response = await axios.post(`http://localhost:3000/save/add/${userId}`, {
+      const response = await axios.post(`https://realestate-backend-i9x8.onrender.com/save/add/${userId}`, {
         propId: propertyId
       }, { withCredentials: true });
       if(response.data.propId) {
@@ -191,7 +191,7 @@ export const addProperty = (userId, propertyId) => async (dispatch) => {
 // Remove Property
 export const removeProperty = (userId, propertyId) => async (dispatch) => {
   try {
-      const response = await axios.put(`http://localhost:3000/save/remove/${userId}`, {
+      const response = await axios.put(`https://realestate-backend-i9x8.onrender.com/save/remove/${userId}`, {
         propId: propertyId
       }, { withCredentials: true });
       if(response.data.propId) {

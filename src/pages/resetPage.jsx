@@ -48,7 +48,7 @@ const PasswordResetPage = () => {
     setTimeout(async () => {
       try{
       setIsSubmitting(false);
-      const sendData=await axios.post('http://localhost:3000/reset-password',data,{
+      const sendData=await axios.post('https://realestate-backend-i9x8.onrender.com/reset-password',data,{
         headers:{
           'Content-Type': 'application/json'
         }
