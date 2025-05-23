@@ -15,8 +15,9 @@ const Navbar = () => {
       navigate('/search', { state: { query: searchValue ,key: searchValue.trim() }});
     }
   };
+
   return (
-    <nav className="bg-slate-600/30 p-4 relative z-10">
+    <nav className="bg-slate-300 p-4 relative z-10 bg-opacity-1">
       <div className="container mx-auto">
         <div className="flex items-center justify-between">
           {/* Logo */}

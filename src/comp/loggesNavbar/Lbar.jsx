@@ -150,7 +150,7 @@ const Lbar = ({ id }) => {
   return (
     <div>
       <motion.nav
-        className="bg-slate-800 bg-opacity-60 backdrop-blur-md p-4 flex items-center justify-between shadow-lg"
+        className="bg-slate-800 bg-opacity-1 backdrop-blur-md p-4 flex items-center justify-between shadow-lg"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, type: 'spring' }}

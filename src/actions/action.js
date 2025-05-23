@@ -38,11 +38,12 @@ export const fetchUser = (userId) => {
 export const updateUser = (userId,updatedData) => {
   return (dispatch) => {
     dispatch(fetchUserRequest());
+    console.log(updatedData)
     axios.put(`http://localhost:3000/update/${userId}`,updatedData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
-      withCredentials: true, t
+      withCredentials: true, 
     }) 
       .then(response => {
         const user = response.data;
@@ -80,18 +81,19 @@ export const fetchPropertyFailure = (error) => {
 export const fetchProp = (saleType) => {
   return (dispatch) => {
     dispatch(fetchPropertyRequest());
-    axios.get(`http://localhost:3000/sale`,{
-      type:'selling'
-    }  , { withCredentials: true })
-      .then(response => {
-        const user = response.data;
-        console.log("working",user)
-        dispatch(fetchPropertySuccess(user));
-      })
-      .catch(error => {
-        dispatch(fetchPropertyFailure(error.message));
-      });
-  };
+    axios.get('http://localhost:3000/sale', {
+      params: { type: 'selling' },           
+      withCredentials: true               
+    })
+    .then(response => {
+      const user = response.data;
+      console.log("working selling", user);
+      dispatch(fetchPropertySuccess(user));
+    })
+    .catch(error => {
+      dispatch(fetchPropertyFailure(error.message));
+    });
+      };
 };
 
 export const fetchRentProp = (saleType) => {

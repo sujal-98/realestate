@@ -1,28 +1,19 @@
 import React from 'react';
 import Navbar from '../comp/header/navbar';
 import Text from '../comp/bheader/text';
-import { Images } from './images';
 import Map from '../comp/map/map';
 import Recently from '../comp/Cardslider/recently';
 import Top from '../comp/topseller/top';
 import Rental from '../comp/rentalslider/rental';
-import { Swiper, SwiperSlide } from 'swiper/react';
 
 import './pagecss/home.css'; 
 
 const Home = () => {
   return (
     <div>
-      <div style={{ height: "48rem" }}>
-        <img
-          src="/images/bg.jpg"
-          alt="background"
-          className="absolute inset-0 w-full object-cover"
-          style={{ zIndex: '-1', height: '48rem' }}
-        />
+       
         <Navbar />
         <Text />
-      </div>
 
       {/* <Swiper
         spaceBetween={50}

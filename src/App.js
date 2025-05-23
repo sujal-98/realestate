@@ -16,6 +16,7 @@ import Rent from './pages/rent';
 import Saved from './pages/Saved';
 import Listing from './pages/listing';
 import SearchResults from './pages/search';
+import PasswordResetPage from './pages/resetPage';
 
 function App() {
   const [userId, setUserId] = useState('');
@@ -25,16 +26,18 @@ function App() {
   };
 
   return (
+    
     <Provider store={store}>
-
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
+      
+        <Route path="/register" element={<Signup />} />
+        <Route path="/login" element={<Login onChildClick={handleChild} />} />
+ 
         <Route path={`/profile/:userId`} element={
           <Userpage props={userId} />
         } />
-        <Route path="/register" element={<Signup />} />
-        <Route path="/login" element={<Login onChildClick={handleChild} />} />
         <Route path="/search" element={<SearchResults key={location?.state?.key}  />} />
         <Route path="/account/:userId" element={<Account props={userId}/>} />
         <Route path="/termsconditions" element={<Tc /> }/>
@@ -43,7 +46,7 @@ function App() {
         <Route path="/profile/rent/:userId" element={<Rent props={userId} />} />
         <Route path="/profile/save/:userId" element={<Saved props={userId} />} />
         <Route path="/profile/listing" element={<Listing/>} />
-
+        <Route path="/reset-password/:token" element={<PasswordResetPage />} />
       </Routes>
     </Router></Provider>
   );

@@ -3,40 +3,17 @@ import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { Camera, FileText, MapPin, DollarSign, Home, Upload, Building2 } from 'lucide-react';
 import Lbar from '../comp/loggesNavbar/Lbar';
-import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
+import OpenLayersMap from '../comp/map/OpenLayersMap'; // Import the fixed map component
 import axios from 'axios';
 
-
-
-const LocationSelector = ({ onLocationChange }) => {
-  const customIcon = new L.Icon({
-      iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-      iconSize: [25, 41],
-      iconAnchor: [12, 41],
-      popupAnchor: [1, -34],
-      shadowSize: [41, 41]
-    });
-    
-  const [position, setPosition] = useState(null);
-
-  useMapEvents({
-    click(event) {
-      const { lat, lng } = event.latlng;
-      setPosition(event.latlng); // Update marker position
-      onLocationChange(lat, lng); // Pass latitude and longitude to parent
-    },
-  });
-
-  return position ? <Marker position={position} icon={customIcon} /> : null;
-};
-
 const UploadForSellForm = ({ id, onSubmit }) => {
-  const [location, setLocation] = useState({ latitude: "", longitude: "" });
+  const [location, setLocation] = useState({ latitude: "28.6139", longitude: "77.2090" });
 
   const handleLocationChange = (lat, lng) => {
-    setLocation({ latitude: lat, longitude: lng });
+    setLocation({ 
+      latitude: lat.toFixed(6), 
+      longitude: lng.toFixed(6) 
+    });
   };
 
   const [propertyImages, setPropertyImages] = useState([]);
@@ -71,14 +48,15 @@ const UploadForSellForm = ({ id, onSubmit }) => {
     }));
   };
 
-
   const initialValues = {
     type:'selling',
     propertyType: '',
     title:'',
     price: '',
     area: '',
-    location: '',
+    state: '',
+    city: '',
+    address: '',
     yearBuilt: '',
     bedrooms: '',
     bathrooms: '',
@@ -100,7 +78,6 @@ const UploadForSellForm = ({ id, onSubmit }) => {
     yearBuilt: Yup.number().positive('Must be positive').required('Required'),
     description: Yup.string().required('Required'),
     title: Yup.string().required('Required'),
-
   });
 
   const handleSubmit = async (values) => {
@@ -112,23 +89,22 @@ const UploadForSellForm = ({ id, onSubmit }) => {
     formData.append('title', values.title);
     formData.append('type', values.propertyType);
     formData.append('price', values.price);
-    formData.append('yearBuilt', values.yearBuilt); // Ensure you append yearBuilt
+    formData.append('yearBuilt', values.yearBuilt);
 
     // Step 3: Handle amenities
     formData.append('amenities[bedrooms]', values.bedrooms);
-    formData.append('amenities[kitchens]', values.kitchens || ''); // Assuming kitchens is part of the form
+    formData.append('amenities[kitchens]', values.kitchens || '');
     formData.append('amenities[bathrooms]', values.bathrooms);
     formData.append('amenities[parking]', values.parking);
-    formData.append('amenities[balcony]', values.balconies); // Corrected typo 'balcony' to match the field
+    formData.append('amenities[balcony]', values.balconies);
     formData.append('amenities[area]', values.area);
 
-// Step 4: Handle Location
-formData.append('location[latitude]', location.latitude);
-formData.append('location[longitude]', location.longitude || ''); 
-formData.append('location[city]', values.city);
-formData.append('location[state]', values.state);
-formData.append('location[address]', values.address); 
-
+    // Step 4: Handle Location
+    formData.append('location[latitude]', location.latitude);
+    formData.append('location[longitude]', location.longitude); 
+    formData.append('location[city]', values.city);
+    formData.append('location[state]', values.state);
+    formData.append('location[address]', values.address); 
 
     // Append property images
     propertyImages.forEach((file) => {
@@ -138,21 +114,19 @@ formData.append('location[address]', values.address);
     // Append proof of ownership files
     formData.append('adharCard', documents.adharCard);
     formData.append('panCard', documents.panCard);
-
-    // Step 4: Make the API request
     for (let pair of formData.entries()) {
       console.log(pair[0] + ': ' + pair[1]);
     }
-
+    // Step 4: Make the API request
     try {
       const response = await axios.post(`http://localhost:3000/upload/${id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
-        }      ,    withCredentials: true, 
-
+        },
+        withCredentials: true, 
       });
       console.log('Property uploaded successfully', response.data);
-      alert("Property uploaded");
+      alert("Property uploaded successfully!");
     } catch (error) {
       console.error('Error uploading property', error);
       alert("Error uploading property. Please try again.");
@@ -196,7 +170,7 @@ formData.append('location[address]', values.address);
                   <div className="space-y-2">
                     <label className="block text-sm font-medium text-gray-700">Title</label>
                     <div className="relative">
-                      <Field type="text" name="title" className="w-full  rounded-lg border-gray-300 border p-2.5 focus:ring-2 focus:ring-blue-500" />
+                      <Field type="text" name="title" className="w-full rounded-lg border-gray-300 border p-2.5 focus:ring-2 focus:ring-blue-500" />
                       <ErrorMessage name="title" component="div" className="text-red-500 text-sm" />
                     </div>
                   </div>
@@ -302,25 +276,16 @@ formData.append('location[address]', values.address);
                 <ErrorMessage name="description" component="div" className="text-red-500 text-sm" />
               </section>
 
-              
-              {/* Map */}
-                <div className="space-y-4">
-                <label className="block text-sm font-medium text-gray-700">
+              {/* Map - OpenLayers Implementation */}
+              <div className="space-y-4">
+                <h2 className="text-xl font-semibold text-gray-700 flex items-center gap-2">
+                  <MapPin className="w-5 h-5" />
                   Select Location on Map
-                </label>
-                <div className="h-96 w-full rounded-lg border">
-                  <MapContainer
-                   center={[28.6139, 77.2090]}
-                    zoom={13}
-                    style={{ height: "100%", width: "100%" }}
-                  >
-                    <TileLayer
-                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                      attribution="&copy; OpenStreetMap contributors"
-                    />
-                    <LocationSelector onLocationChange={handleLocationChange} />
-                  </MapContainer>
-                </div>
+                </h2>
+                <p className="text-sm text-gray-600">Click on the map to select the property location</p>
+                
+                {/* This is our fixed OpenLayersMap component */}
+                <OpenLayersMap onLocationChange={handleLocationChange} />
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -330,12 +295,12 @@ formData.append('location[address]', values.address);
                     >
                       Latitude
                     </label>
-                    <Field
+                    <input
                       type="text"
                       name="latitude"
                       value={location.latitude}
                       readOnly
-                      className="mt-1 block w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                      className="mt-1 block w-full rounded-lg border-gray-300 border p-2.5 shadow-sm focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
                   <div>
@@ -345,16 +310,17 @@ formData.append('location[address]', values.address);
                     >
                       Longitude
                     </label>
-                    <Field
+                    <input
                       type="text"
                       name="longitude"
                       value={location.longitude}
                       readOnly
-                      className="mt-1 block w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                      className="mt-1 block w-full rounded-lg border-gray-300 border p-2.5 shadow-sm focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
                 </div>
               </div>
+
               {/* File Upload Section */}
               <section className="space-y-6">
                 <h2 className="text-xl font-semibold text-gray-700 flex items-center gap-2">
@@ -384,7 +350,7 @@ formData.append('location[address]', values.address);
                     {documents.proofOfOwnership && (
                       <div className="mt-2">
                         <span>{documents.proofOfOwnership.name}</span>
-                        <button type="button" onClick={() => handleRemoveDocument('proofOfOwnership')} className="text-red-500 text-sm">Remove</button>
+                        <button type="button" onClick={() => handleRemoveDocument('proofOfOwnership')} className="text-red-500 text-sm ml-2">Remove</button>
                       </div>
                     )}
                   </div>
@@ -395,7 +361,7 @@ formData.append('location[address]', values.address);
                     {documents.adharCard && (
                       <div className="mt-2">
                         <span>{documents.adharCard.name}</span>
-                        <button type="button" onClick={() => handleRemoveDocument('adharCard')} className="text-red-500 text-sm">Remove</button>
+                        <button type="button" onClick={() => handleRemoveDocument('adharCard')} className="text-red-500 text-sm ml-2">Remove</button>
                       </div>
                     )}
                   </div>
@@ -406,7 +372,7 @@ formData.append('location[address]', values.address);
                     {documents.panCard && (
                       <div className="mt-2">
                         <span>{documents.panCard.name}</span>
-                        <button type="button" onClick={() => handleRemoveDocument('panCard')} className="text-red-500 text-sm">Remove</button>
+                        <button type="button" onClick={() => handleRemoveDocument('panCard')} className="text-red-500 text-sm ml-2">Remove</button>
                       </div>
                     )}
                   </div>
@@ -417,7 +383,7 @@ formData.append('location[address]', values.address);
               <section className="flex justify-center mt-6">
                 <button
                   type="submit"
-                  className={`w-full py-3 bg-blue-500 text-white font-semibold rounded-lg ${uploading ? 'bg-gray-500' : ''}`}
+                  className={`w-full py-3 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition duration-200 ${uploading ? 'opacity-70 cursor-not-allowed' : ''}`}
                   disabled={uploading}
                 >
                   {uploading ? 'Uploading...' : 'Submit Property'}

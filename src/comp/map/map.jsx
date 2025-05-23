@@ -9,7 +9,7 @@ const Map = () => {
       <h4 className="text-xl  text-center font-thin tracking-wide">Check out top localities in Delhi</h4>
       </div>
       <div className='bg-blue-100'>
-        <Toggle />
+        {<Toggle />}
       </div>
     </div>
   );

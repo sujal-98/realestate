@@ -1,15 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { MapPin, Navigation, Home, Coffee } from 'lucide-react';
-import {locations} from '../../resources/properties'
-import axios from 'axios'
-import Leaflet from './leaflet';
-import Verticle from './verticle'
-import { json } from 'react-router-dom';
+import { locations } from '../../resources/properties';
+import LocationList from './locationList';
+import OpenLayersMap from './leaflet';
 
 const Toggle = () => {
   const [activeButton, setActiveButton] = useState(0);
-  const [count,setCount]=useState(0);
-  const [lookUp,setLookUp]=useState({});
+  const [lookUp, setLookUp] = useState({});
   
   const menuItems = [
     [
@@ -62,19 +59,18 @@ const Toggle = () => {
     ]
   ];
 
-
   useEffect(() => {
     const computeAndStoreLookUp = async () => {
       const storedLookUp = localStorage.getItem("lookUp");
-  const updatedLookUp={}
+      
       // Check if data exists in localStorage
       if (storedLookUp) {
         console.log("Data retrieved from localStorage");
         setLookUp(JSON.parse(storedLookUp)); 
         return; 
-      }
-   else {
+      } else {
         console.log("Calculating lookUp...");
+        const updatedLookUp = {};
         menuItems.flat().forEach((item) => {
           for (const key in locations) {
             if (key.includes(item.name)) {
@@ -92,14 +88,12 @@ const Toggle = () => {
   
         setLookUp(updatedLookUp);
         localStorage.setItem("lookUp", JSON.stringify(updatedLookUp));
-  
       }
     };
   
     computeAndStoreLookUp();
   }, []);
   
-
   // Button configurations with icons and gradients
   const buttonConfigs = [
     { 
@@ -124,44 +118,17 @@ const Toggle = () => {
     }
   ];
 
-  const [selectedLocation, setSelectedLocation] = useState('');
-
-
-  
-
-  const LocationList = ({ items, onSelect }) => (
-    <div className="w-1/3 pr-4 overflow-y-auto h-[500px]">
-      <div className="space-y-2">
-        {items.map((item) => (
-          <div
-            key={item.id}
-            onClick={() => onSelect(item.id)}
-            className={`
-              p-3 rounded-lg cursor-pointer transition-all duration-300
-              ${selectedLocation === item.id 
-                ? 'bg-gradient-to-r from-blue-50 to-indigo-50 shadow-md' 
-                : 'hover:bg-gray-50'}
-            `}
-          >
-            <div className="flex items-center space-x-3">
-              <MapPin 
-                size={18} 
-                className={`${selectedLocation === item.name ? 'text-blue-500' : 'text-gray-400'}`}
-              />
-              <div>
-                <h3 className={`font-medium ${selectedLocation === item.name ? 'text-blue-600' : 'text-gray-700'}`}>
-                  {item.name}
-                </h3>
-                <p className="text-sm text-gray-500">
-                  {item.latitude.toFixed(4)}, {item.longitude.toFixed(4)}
-                </p>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
+  // Initialize selectedLocation with the ID of the first item in the active menu
+  const [selectedLocation, setSelectedLocation] = useState(
+    menuItems[0] && menuItems[0].length > 0 ? menuItems[0][0].id : null
   );
+  
+  // Update selectedLocation when activeButton changes
+  useEffect(() => {
+    if (menuItems[activeButton] && menuItems[activeButton].length > 0) {
+      setSelectedLocation(menuItems[activeButton][0].id);
+    }
+  }, [activeButton]);
 
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-6">
@@ -189,18 +156,19 @@ const Toggle = () => {
 
       {/* Content Area */}
       <div className="bg-white rounded-2xl shadow-lg p-6">
-        <div className="flex space-x-6"          
-        >
+        <div className="flex space-x-6">
           <LocationList 
-            items={menuItems[activeButton] || []} 
+            items={menuItems[activeButton]} 
             onSelect={setSelectedLocation}
+            selectedLocation={selectedLocation}
           />
-           {activeButton !== null && (
-        <div className="bg-white rounded-lg shadow-md p-4 flex justify-center " style={{width:'100%',height:'90%'}}>
-          
-          <Leaflet label={selectedLocation} items={menuItems[activeButton]} map={lookUp}   count={count} />
-        </div>
-      )}
+          <div className="w-2/3 bg-white rounded-lg shadow-md flex justify-center">
+            <OpenLayersMap
+              label={selectedLocation}
+              items={menuItems[activeButton]} 
+              selectedLocation={selectedLocation}
+            />
+          </div>
         </div>
       </div>
     </div>

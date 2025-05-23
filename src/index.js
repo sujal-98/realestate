@@ -11,9 +11,7 @@ import { UserProvider } from './context/statecon';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <AuthProvider> <UserProvider>
-  <React.StrictMode>
     <App />
-  </React.StrictMode>
   </UserProvider>    </AuthProvider>
 
 );

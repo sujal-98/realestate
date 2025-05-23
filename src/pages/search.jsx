@@ -33,31 +33,31 @@ import { useNavigate } from 'react-router-dom';
 
 const SearchResults = () => {
 const navigate=useNavigate();
-  const storedLookUp = localStorage.getItem("lookUp");
+const storedLookUp = localStorage.getItem("lookUp");
 const location=useLocation();
 const {query}=location.state;
-const [squery, setSQuery] = useState(query);
 const [filteredResults,setFilteredResults]=useState([])
   const { isAuthenticated } = useAuth();
-console.log("isauth",isAuthenticated)
+console.log("query",query)
 
     useEffect(()=>{
+    const allResults = JSON.parse(storedLookUp)
+    console.log("allresults",allResults)
+    for(const key in allResults){
+      console.log("key ",key)
+        if(key.toLowerCase().includes(query.toLowerCase())){
+          console.log(key)
+            setFilteredResults(allResults[key]);
+            break;
+            }
+            }
+        },[query])
+      
+      const [currentPage, setCurrentPage] = useState(1);
+      const itemsPerPage = 6;
 
-        const allResults = JSON.parse(storedLookUp)
-console.log("allresults",allResults)
-for(const key in allResults){
-    if(key.toLowerCase().includes(squery.toLowerCase())){
-        setFilteredResults(allResults[key]);
-        break;
-        }
-        }
-    },[query])
-  
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6;
-
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+      const theme = useTheme();
+      const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
 
   // Calculate pagination

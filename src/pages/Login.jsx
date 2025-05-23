@@ -3,15 +3,49 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
 import { useNavigate, Navigate } from 'react-router-dom';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 
 const Login = ({ onChildClick }) => {
+  
   const navigate=useNavigate()
+  const [open, setOpen] = useState(false);
   const [redirect, setRedirect] = useState(false);
   const [userId, setUserId] = useState("");
+  const [email, setEmail] = useState('');
+  const [submissionStatus, setSubmissionStatus] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const validationSchema = Yup.object().shape({
     email: Yup.string().email('Invalid email').required('Email is required'),
     password: Yup.string().required('Password is required'),
   });
+  const handleSubmit=async (e) => {
+    try{
+    e.preventDefault();
+    setIsSubmitting(true)
+    const response=await axios.post('http://localhost:3000/forgot-password',{email},{
+      method:"Post",
+      header:{
+        'Content-Type': 'application/json',
+      }
+    })
+    if(response.data.success){
+      setSubmissionStatus('success')
+    }
+    setIsSubmitting(false)
+    }catch(error){
+      setIsSubmitting(false)
+      console.log(error);
+    }
+  }
 
   const formik = useFormik({
     initialValues: {
@@ -37,6 +71,8 @@ const Login = ({ onChildClick }) => {
       }
     }
   });
+
+
 
   if (redirect) {
     return <Navigate to={`/profile/:${userId}`} />;
@@ -87,8 +123,10 @@ const Login = ({ onChildClick }) => {
           {formik.errors.password && formik.touched.password && <p className="text-red-500 text-xs italic">{formik.errors.password}</p>}
         </div>
         <div className="flex items-center justify-between flex-col">
-          <div className="text-base">
-            <a className="text-blue-500 hover:text-blue-700" href="#">Forgot Password?</a>
+          <div className="text-base" onClick={()=>{
+            setSubmissionStatus(null)
+            setOpen(true)}}>
+            <a className="text-blue-500 hover:text-blue-700 cursor-pointer">Forgot Password?</a>
           </div>
        
         <button
@@ -103,8 +141,81 @@ const Login = ({ onChildClick }) => {
           }} >SignUp</a>
         </div> </div>
       </form>
+
+      <Dialog
+        open={open}
+        onClose={()=>{setOpen(false)}}
+        slotProps={{
+          paper: {
+            component: 'form',
+        }}}
+      >
+        <DialogTitle>Account Recovery</DialogTitle>
+        <IconButton
+          aria-label="close"
+          onClick={()=>{setOpen(false)}}
+          sx={{
+            position: 'absolute',
+            right: 8,
+            top: 8,
+            color: (theme) => theme.palette.grey[500],
+            '&:hover': {
+              color: 'red',
+            },
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+        {submissionStatus===null && (
+        <>
+        <DialogContent>
+          <DialogContentText>
+            Please Enter the Email Id of you Account to get the recovery Email.
+          </DialogContentText>
+          <TextField
+            autoFocus
+            required
+            margin="dense"
+            id="name"
+            name="email"
+            label="Email Address"
+            type="email"
+            fullWidth
+            onChange={(e) => setEmail(e.target.value)}
+            variant="standard"
+          />
+        </DialogContent>
+        <DialogActions>
+        <Button onClick={()=>{setOpen(false)}}>Cancel</Button>
+        <Button onClick={handleSubmit} disabled={isSubmitting}>{isSubmitting ? 'Sending...' : 'Send Link'}
+        </Button>
+        </DialogActions>
+        </>
+)}    
+ {submissionStatus === 'success' && (
+          <DialogContent>
+            <DialogContentText sx={{ color: 'green' }}>
+              ✅ Recovery link sent successfully!
+            </DialogContentText>
+            <DialogActions>
+              <Button onClick={()=>{setOpen(false)}}>Close</Button>
+            </DialogActions>
+          </DialogContent>
+        )}
+
+        {submissionStatus === 'error' && (
+          <DialogContent>
+            <DialogContentText sx={{ color: 'red' }}>
+              ❌ Failed to send recovery link. Please retry.
+            </DialogContentText>
+            <DialogActions>
+              <Button onClick={()=>{setOpen(false)}}>Cancel</Button>
+              <Button type="submit" onClick={() => {setSubmissionStatus(null)}}>Retry</Button>
+            </DialogActions>
+          </DialogContent>
+        )}
+ </Dialog>
     </div>
-  );
-}
+  )}
 
 export default Login;

@@ -8,6 +8,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { fetchRentProp, fetchSave, addProperty, removeProperty } from '../actions/action';
 import { motion } from 'framer-motion';
 import { styled } from '@mui/material/styles';
+import axios from 'axios';
 
 // Define a sky-themed dynamic background component
 const SkyBackground = styled(Box)(({ theme }) => ({
@@ -85,10 +86,16 @@ const Rent = ({props}) => {
   const totalPages = Math.ceil(properties.length / itemsPerPage);
 
 
-  const handleClick=(info)=>{
-    Navigate('/profile/listing',{state: { info: info, userid: id } })
-  }
+  const handleClick=async (info)=>{
 
+    try {    
+    const response=await axios.put(`http://localhost:3000/impressions/${info._id}`,{}) 
+    if(response.data.success){
+    Navigate('/profile/listing',{state: { info: info, userid: id } })}}
+      catch(error){
+        console.log("error ",error)
+      }
+  }
 
   return (
     <SkyBackground>
@@ -127,78 +134,92 @@ const Rent = ({props}) => {
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <Card
-                    sx={{
-                      height: '100%',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      transition: 'transform 0.3s, box-shadow 0.3s',
-                      borderRadius: 3,
-                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
-                      '&:hover': {
-                        transform: 'scale(1.05)',
-                        boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)',
-                      },
-                      zIndex:30
-                    }}
-                    
-                  >
-                    <Box sx={{ position: 'relative' }}>
-                      <img
-                        src={property.propertyImages[0]}
-                        alt={property.description}
-                        onClick={()=>{handleClick(property)}}
-                        style={{ width: '100%', height: 200, objectFit: 'cover', borderTopLeftRadius: 3, borderTopRightRadius: 3 }}
-                      />
-                      <CardContent sx={{ flexGrow: 1, p: 2 }}    >
-                        <Typography variant="h6" component="div" gutterBottom sx={{ fontWeight: 'bold', fontSize: '1.1rem', color: '#000' }}>
-                          {property.title}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                          {property.description}
-                        </Typography>
-                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}  >
-                            <FontAwesomeIcon icon={faEye} style={{ color: '#555' }} />
-                            <Typography variant="body2" color="text.secondary">
-                              {property.impressions}
-                            </Typography>
-                          </Box>
-                             <Button
-                                                      variant="contained"
-                                                      color={savedProperties.has(property._id) ? 'error' : 'primary'}
-                                                      startIcon={<FontAwesomeIcon icon={faHeart} />}
-                                                      size="small"
-                                                      onClick={() => handleSave(property._id)}
-                                                      sx={{
-                                                        fontSize: '0.8rem',
-                                                        fontWeight: 'bold',
-                                                        px: 2,
-                                                      }}
-                                                    >
-                                                      {savedProperties.has(property._id) ? 'Saved' : 'Save'}
-                                                    </Button>
-                        </Box>
-                        <CardActions sx={{ position: 'relative', bottom: 0, left: 0, right: 0, pb: 2 }}>
-                          <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1 }}>
-                            <Avatar
-                              src={property.sellerId.userId.profilePicture?.data || '/images/default-avatar.png'}
-                              alt={property.sellerId.userId.username}
-                              sx={{ width: 28, height: 28 }}
-                            />
-                            <Typography variant="body2" color="text.secondary">
-                              {property.sellerId.userId.username}
-                            </Typography>
-                          </Box>
-                          <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2,ml:4 }}>
-                            <Button variant="contained" color="success" size="small">
-                              Contact Now
-                            </Button>
-                          </Box>
-                        </CardActions>
-                      </CardContent>
-                    </Box>
-                  </Card>
+                 <Card
+                   sx={{
+                     height: '100%',
+                     display: 'flex',
+                     flexDirection: 'column',
+                     borderRadius: 3,
+                     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
+                     transition: 'transform 0.3s, box-shadow 0.3s',
+                     '&:hover': {
+                       transform: 'scale(1.03)',
+                       boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)',
+                     },
+                     zIndex: 30,
+                     overflow: 'hidden',
+                   }}
+                   onClick={()=>{handleClick(property)}}
+                 >
+                   <Box sx={{ position: 'relative' }}>
+                     <img
+                       src={property.propertyImages[0]}
+                       alt={property.description}
+                       style={{
+                         width: '100%',
+                         height: 200,
+                         objectFit: 'cover',
+                       }}
+                     />
+                   </Box>
+                 
+                   <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', p: 2 }}>
+                     <Typography variant="h6" gutterBottom sx={{ fontWeight: 700 }}>
+                       {property.title}
+                     </Typography>
+                 
+                     <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                       {property.description}
+                     </Typography>
+                 
+                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
+                       <Box
+                         sx={{ display: 'flex', alignItems: 'center', gap: 1, cursor: 'pointer' }}
+                         onClick={() => handleClick(property)}
+                       >
+                         <FontAwesomeIcon icon={faEye} style={{ color: '#555' }} />
+                         <Typography variant="body2" color="text.secondary">
+                           {property.impressions}
+                         </Typography>
+                       </Box>
+                 
+                       <Button
+                         variant="contained"
+                         color={savedProperties.has(property._id) ? 'error' : 'primary'}
+                         startIcon={<FontAwesomeIcon icon={faHeart} />}
+                         size="small"
+                         onClick={() => handleSave(property._id)}
+                         sx={{ fontSize: '0.8rem', fontWeight: 'bold', px: 2 }}
+                       >
+                         {savedProperties.has(property._id) ? 'Saved' : 'Save'}
+                       </Button>
+                     </Box>
+                 
+                     <Box
+                       sx={{
+                         display: 'flex',
+                         justifyContent: 'space-between',
+                         alignItems: 'center',
+                         mt: 'auto',
+                       }}
+                     >
+                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                         <Avatar
+                           src={property.sellerId.userId.profilePicture?.data || '/images/default-avatar.png'}
+                           alt={property.sellerId.userId.username}
+                           sx={{ width: 28, height: 28 }}
+                         />
+                         <Typography variant="body2" color="text.secondary">
+                           {property.sellerId.userId.username}
+                         </Typography>
+                       </Box>
+                 
+                       <Button variant="contained" color="success" size="small">
+                         Contact Now
+                       </Button>
+                     </Box>
+                   </CardContent>
+                 </Card>
                  
                 </motion.div>
               </Grid>
